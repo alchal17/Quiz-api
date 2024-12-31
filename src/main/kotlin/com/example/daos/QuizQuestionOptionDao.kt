@@ -5,35 +5,33 @@ import com.example.models.database_representation.QuizQuestionOptions
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class QuizQuestionOptionDao(private val finder: Finder) :
+class QuizQuestionOptionDao :
     Dao<QuizQuestionOption>(QuizQuestionOptions) {
     override fun toEntity(row: ResultRow): QuizQuestionOption {
-        val quizQuestionId = row[QuizQuestionOptions.quizQuestion].value
         return QuizQuestionOption(
             id = row[QuizQuestionOptions.id].value,
             text = row[QuizQuestionOptions.text],
             isCorrect = row[QuizQuestionOptions.isCorrect],
-            quizQuestion = finder.findQuizQuestionById(quizQuestionId) ?: throw Exception("Unknown quiz question id"),
         )
     }
 
-    override fun add(entity: QuizQuestionOption): Int {
+    fun add(quizQuestionOption: QuizQuestionOption, quizQuestionId: Int): Int {
         return transaction {
             QuizQuestionOptions.insertAndGetId { row ->
-                row[text] = entity.text
-                row[isCorrect] = entity.isCorrect
+                row[text] = quizQuestionOption.text
+                row[isCorrect] = quizQuestionOption.isCorrect
                 row[quizQuestion] =
-                    entity.quizQuestion.id ?: throw IllegalArgumentException("Unknown quiz question id.")
+                    quizQuestionId
             }.value
         }
     }
 
-    override fun update(id: Int, entity: QuizQuestionOption) {
+    fun update(id: Int, entity: QuizQuestionOption, quizQuestionId: Int) {
         QuizQuestionOptions.update({ QuizQuestionOptions.id eq id }) { row ->
             row[text] = entity.text
             row[isCorrect] = entity.isCorrect
             row[quizQuestion] =
-                entity.quizQuestion.id ?: throw IllegalArgumentException("Unknown quiz question id.")
+                quizQuestionId
         }
     }
 

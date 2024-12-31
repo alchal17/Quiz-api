@@ -10,10 +10,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 abstract class Dao<T : Model>(protected val table: IntIdTable) {
     protected abstract fun toEntity(row: ResultRow): T
-    abstract fun update(id: Int, entity: T)
-
-    //creates an entity and returns an id of this entity
-    abstract fun add(entity: T): Int
     fun delete(id: Int) {
         transaction { table.deleteWhere { table.id eq id } }
     }

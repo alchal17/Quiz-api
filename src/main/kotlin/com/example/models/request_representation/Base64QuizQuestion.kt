@@ -1,7 +1,6 @@
 package com.example.models.request_representation
 
 import com.example.models.Model
-import com.example.models.database_representation.Quiz
 import com.example.models.database_representation.QuizQuestion
 import com.example.models.database_representation.QuizQuestionOption
 import kotlinx.serialization.SerialName
@@ -10,7 +9,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Base64QuizQuestion(
     override val id: Int? = null,
-    val quiz: Quiz,
     val text: String,
     val description: String?,
     @SerialName("base64_image")
@@ -23,7 +21,6 @@ data class Base64QuizQuestion(
         fun toQuizQuestion(base64QuizQuestion: Base64QuizQuestion, imagePath: String?): QuizQuestion {
             return QuizQuestion(
                 id = base64QuizQuestion.id,
-                quiz = base64QuizQuestion.quiz,
                 text = base64QuizQuestion.text,
                 description = base64QuizQuestion.description,
                 imagePath = imagePath,

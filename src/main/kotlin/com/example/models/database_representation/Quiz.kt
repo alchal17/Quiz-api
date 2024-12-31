@@ -15,7 +15,6 @@ object Quizzes : IntIdTable("quizzes") {
 data class Quiz(
     override val id: Int? = null,
     val name: String,
-    val user: QuizUser,
     val imagePath: String?,
     val questions: List<QuizQuestion>
 ) : Model

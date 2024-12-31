@@ -16,5 +16,4 @@ data class QuizQuestionOption(
     override val id: Int? = null,
     val text: String,
     val isCorrect: Boolean,
-    val quizQuestion: QuizQuestion
 ) : Model

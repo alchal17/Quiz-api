@@ -10,7 +10,6 @@ import org.jetbrains.exposed.sql.update
 
 class QuizQuestionDao(
     private val quizQuestionOptionDao: QuizQuestionOptionDao,
-    private val finder: Finder
 ) :
     Dao<QuizQuestion>(QuizQuestions) {
 
@@ -19,7 +18,6 @@ class QuizQuestionDao(
         val quizId = row[QuizQuestions.quiz].value
         return QuizQuestion(
             id = row[QuizQuestions.id].value,
-            quiz = finder.findQuizById(quizId) ?: throw Exception("Quiz not found!"),
             text = row[QuizQuestions.text],
             description = row[QuizQuestions.description],
             imagePath = row[QuizQuestions.imagePath],
@@ -28,40 +26,43 @@ class QuizQuestionDao(
         )
     }
 
-    override fun add(entity: QuizQuestion): Int {
+    fun add(quizQuestion: QuizQuestion, quizId: Int): Int {
         return transaction {
             val questionId = QuizQuestions.insert { row ->
-                row[quiz] = entity.quiz.id ?: throw IllegalArgumentException("Quiz ID is required")
-                row[text] = entity.text
-                row[description] = entity.description
-                row[imagePath] = entity.imagePath
-                row[multipleChoices] = entity.multipleChoices
+                row[quiz] = quizId
+                row[text] = quizQuestion.text
+                row[description] = quizQuestion.description
+                row[imagePath] = quizQuestion.imagePath
+                row[multipleChoices] = quizQuestion.multipleChoices
             } get QuizQuestions.id
 
-            val questionOptions = entity.options
+            val questionOptions = quizQuestion.options
             questionOptions.forEach { option ->
-                quizQuestionOptionDao.add(option.copy(quizQuestion = entity.copy(id = questionId.value)))
+                quizQuestionOptionDao.add(option, questionId.value)
             }
 
             questionId.value
         }
     }
 
-    override fun update(id: Int, entity: QuizQuestion) {
+    fun update(id: Int, quizQuestion: QuizQuestion, quizId: Int) {
         transaction {
             QuizQuestions.update({ QuizQuestions.id eq id }) { row ->
-                row[quiz] = entity.quiz.id ?: throw IllegalArgumentException("Quiz ID is required")
-                row[text] = entity.text
-                row[description] = entity.description
-                row[imagePath] = entity.imagePath
-                row[multipleChoices] = entity.multipleChoices
+                row[quiz] = quizId
+                row[text] = quizQuestion.text
+                row[description] = quizQuestion.description
+                row[imagePath] = quizQuestion.imagePath
+                row[multipleChoices] = quizQuestion.multipleChoices
             }
         }
-        entity.options.forEach {
+        quizQuestion.options.forEach {
             quizQuestionOptionDao.delete(it)
         }
-        entity.options.forEach { option ->
-            quizQuestionOptionDao.add(option.copy(quizQuestion = entity.copy(id = id)))
+        quizQuestion.options.forEach { option ->
+            quizQuestionOptionDao.add(
+                quizQuestionOption = option,
+                quizQuestionId = quizQuestion.id ?: throw Exception("Question Option Id not found")
+            )
         }
     }
 

@@ -17,7 +17,6 @@ object QuizQuestions : IntIdTable("quiz_questions") {
 @Serializable
 data class QuizQuestion(
     override val id: Int? = null,
-    val quiz: Quiz,
     val text: String,
     val description: String?,
     @SerialName("image_path")

@@ -36,7 +36,7 @@ fun Route.quizRoutes(quizDao: QuizDao, imageSaver: BasicImageSaver) {
                 quizQuestions = quizQuestions
             )
 
-            call.respond(HttpStatusCode.Created, quizDao.add(quiz))
+            call.respond(HttpStatusCode.Created, quizDao.add(quiz = quiz, userId = base64Quiz.userId))
         }
     }
 }

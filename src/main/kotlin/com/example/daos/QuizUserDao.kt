@@ -10,7 +10,7 @@ class QuizUserDao : Dao<QuizUser>(table = QuizUsers) {
         return QuizUser(id = row[QuizUsers.id].value, username = row[QuizUsers.username], email = row[QuizUsers.email])
     }
 
-    override fun add(entity: QuizUser): Int {
+    fun add(entity: QuizUser): Int {
         return transaction {
             QuizUsers.insertAndGetId { row ->
                 row[username] = entity.username
@@ -19,7 +19,7 @@ class QuizUserDao : Dao<QuizUser>(table = QuizUsers) {
         }
     }
 
-    override fun update(id: Int, entity: QuizUser) {
+    fun update(id: Int, entity: QuizUser) {
         transaction {
             QuizUsers.update({ QuizUsers.id eq id }) { row ->
                 row[username] = entity.username
