@@ -35,3 +35,5 @@ out/
 ### VS Code ###
 .vscode/
 /.env
+/quiz_images/
+/quiz_questions_images/

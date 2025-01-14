@@ -10,22 +10,23 @@ import kotlinx.serialization.Serializable
 data class Base64QuizQuestion(
     override val id: Int? = null,
     val text: String,
-    val description: String?,
     @SerialName("base64_image")
     val base64Image: String?,
     @SerialName("multiple_choices")
     val multipleChoices: Boolean,
-    val options: List<QuizQuestionOption>
+    val options: List<QuizQuestionOption>,
+    @SerialName("seconds_to_answer")
+val secondsToAnswer: Int
 ) : Model {
     companion object {
         fun toQuizQuestion(base64QuizQuestion: Base64QuizQuestion, imagePath: String?): QuizQuestion {
             return QuizQuestion(
                 id = base64QuizQuestion.id,
                 text = base64QuizQuestion.text,
-                description = base64QuizQuestion.description,
                 imagePath = imagePath,
                 multipleChoices = base64QuizQuestion.multipleChoices,
-                options = base64QuizQuestion.options
+                options = base64QuizQuestion.options,
+                secondsToAnswer = base64QuizQuestion.secondsToAnswer
             )
         }
     }

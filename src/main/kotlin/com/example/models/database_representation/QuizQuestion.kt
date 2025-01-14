@@ -9,19 +9,20 @@ import org.jetbrains.exposed.sql.ReferenceOption
 object QuizQuestions : IntIdTable("quiz_questions") {
     val quiz = reference("quiz_id", Quizzes, onDelete = ReferenceOption.CASCADE)
     val text = varchar("text", 255)
-    val description = varchar("description", 255).nullable()
     val imagePath = varchar("image_path", 100).nullable()
     val multipleChoices = bool("multiple_choices")
+    val secondsToAnswer = integer("seconds_answer")
 }
 
 @Serializable
 data class QuizQuestion(
     override val id: Int? = null,
     val text: String,
-    val description: String?,
     @SerialName("image_path")
     val imagePath: String?,
     @SerialName("multiple_choices")
     val multipleChoices: Boolean,
-    val options: List<QuizQuestionOption>
+    val options: List<QuizQuestionOption>,
+    @SerialName("seconds_to_answer")
+    val secondsToAnswer: Int
 ) : Model

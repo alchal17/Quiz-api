@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.ReferenceOption
 object Quizzes : IntIdTable("quizzes") {
     val name = varchar("name", 255)
     val user = reference("user_id", QuizUsers, onDelete = ReferenceOption.CASCADE)
+    val description = text("description").nullable()
     val imagePath = varchar("image_path", 100).nullable()
 }
 
@@ -16,5 +17,6 @@ data class Quiz(
     override val id: Int? = null,
     val name: String,
     val imagePath: String?,
+    val description: String?,
     val questions: List<QuizQuestion>
 ) : Model

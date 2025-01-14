@@ -21,7 +21,7 @@ fun Application.configureRouting() {
         userRoutes(quizUserDao)
         quizRoutes(quizDao, imageSaver)
         get("/") {
-            call.respond("Hello World!")
+            call.respond("Quiz API server runs.")
         }
     }
 }

@@ -10,10 +10,12 @@ import kotlinx.serialization.Serializable
 data class Base64Quiz(
     override val id: Int? = null,
     val name: String,
+    @SerialName("user_id")
     val userId: Int,
     @SerialName("base64_image")
     val base64Image: String?,
-    val questions: List<Base64QuizQuestion>
+    val description: String?,
+    val questions: List<Base64QuizQuestion>,
 ) : Model {
     companion object {
         fun toQuiz(base64Quiz: Base64Quiz, imagePath: String?, quizQuestions: List<QuizQuestion>): Quiz {
@@ -21,6 +23,7 @@ data class Base64Quiz(
                 id = base64Quiz.id,
                 name = base64Quiz.name,
                 imagePath = imagePath,
+                description = base64Quiz.description,
                 questions = quizQuestions
             )
         }

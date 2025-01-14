@@ -15,14 +15,13 @@ class QuizQuestionDao(
 
 
     override fun toEntity(row: ResultRow): QuizQuestion {
-        val quizId = row[QuizQuestions.quiz].value
         return QuizQuestion(
             id = row[QuizQuestions.id].value,
             text = row[QuizQuestions.text],
-            description = row[QuizQuestions.description],
             imagePath = row[QuizQuestions.imagePath],
             multipleChoices = row[QuizQuestions.multipleChoices],
             options = quizQuestionOptionDao.findByQuizQuestionId(row[QuizQuestions.id].value),
+            secondsToAnswer = row[QuizQuestions.secondsToAnswer]
         )
     }
 
@@ -31,9 +30,9 @@ class QuizQuestionDao(
             val questionId = QuizQuestions.insert { row ->
                 row[quiz] = quizId
                 row[text] = quizQuestion.text
-                row[description] = quizQuestion.description
                 row[imagePath] = quizQuestion.imagePath
                 row[multipleChoices] = quizQuestion.multipleChoices
+                row[secondsToAnswer] = quizQuestion.secondsToAnswer
             } get QuizQuestions.id
 
             val questionOptions = quizQuestion.options
@@ -50,9 +49,9 @@ class QuizQuestionDao(
             QuizQuestions.update({ QuizQuestions.id eq id }) { row ->
                 row[quiz] = quizId
                 row[text] = quizQuestion.text
-                row[description] = quizQuestion.description
                 row[imagePath] = quizQuestion.imagePath
                 row[multipleChoices] = quizQuestion.multipleChoices
+                row[secondsToAnswer] = quizQuestion.secondsToAnswer
             }
         }
         quizQuestion.options.forEach {

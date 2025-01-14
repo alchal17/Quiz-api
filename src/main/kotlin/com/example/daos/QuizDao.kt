@@ -14,6 +14,7 @@ class QuizDao(private val quizQuestionDao: QuizQuestionDao) : Dao<Quiz>(Quizzes)
             id = row[Quizzes.id].value,
             name = row[Quizzes.name],
             imagePath = row[Quizzes.imagePath],
+            description = row[Quizzes.description],
             questions = quizQuestionDao.findByQuizId(row[Quizzes.id].value)
         )
     }
@@ -23,6 +24,7 @@ class QuizDao(private val quizQuestionDao: QuizQuestionDao) : Dao<Quiz>(Quizzes)
             val quizId = Quizzes.insert { row ->
                 row[name] = quiz.name
                 row[user] = userId
+                row[description] = quiz.description
                 row[imagePath] = quiz.imagePath
             } get Quizzes.id
 
