@@ -3,6 +3,7 @@ package com.example.plugins
 import com.example.daos.QuizDao
 import com.example.daos.QuizUserDao
 import com.example.files_handlers.BasicImageSaver
+import com.example.routes.imageRoutes
 import com.example.routes.quizRoutes
 import com.example.routes.userRoutes
 import io.ktor.server.application.*
@@ -20,6 +21,7 @@ fun Application.configureRouting() {
     routing {
         userRoutes(quizUserDao)
         quizRoutes(quizDao, imageSaver)
+        imageRoutes()
         get("/") {
             call.respond("Quiz API server runs.")
         }

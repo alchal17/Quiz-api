@@ -38,5 +38,10 @@ fun Route.quizRoutes(quizDao: QuizDao, imageSaver: BasicImageSaver) {
 
             call.respond(HttpStatusCode.Created, quizDao.add(quiz = quiz, userId = base64Quiz.userId))
         }
+
+        get("/all") {
+            call.respond(quizDao.getAll())
+        }
+
     }
 }
