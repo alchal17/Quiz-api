@@ -40,7 +40,8 @@ fun Route.quizRoutes(quizDao: QuizDao, imageSaver: BasicImageSaver) {
         }
 
         get("/all") {
-            call.respond(quizDao.getAll())
+//            call.respond(quizDao.getAll())
+            call.respond(quizDao.getAllDetailedQuizzes())
         }
 
     }

@@ -2,13 +2,15 @@ package com.example.daos
 
 import com.example.models.database_representation.Quiz
 import com.example.models.database_representation.Quizzes
+import com.example.models.request_representation.DetailedQuiz
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
 
-class QuizDao(private val quizQuestionDao: QuizQuestionDao) : Dao<Quiz>(Quizzes) {
+class QuizDao(private val quizQuestionDao: QuizQuestionDao, private val quizUserDao: QuizUserDao) : Dao<Quiz>(Quizzes) {
     override fun toEntity(row: ResultRow): Quiz {
         return Quiz(
             id = row[Quizzes.id].value,
@@ -17,6 +19,13 @@ class QuizDao(private val quizQuestionDao: QuizQuestionDao) : Dao<Quiz>(Quizzes)
             description = row[Quizzes.description],
             questions = quizQuestionDao.findByQuizId(row[Quizzes.id].value)
         )
+    }
+
+
+    private fun toDetailedQuiz(row: ResultRow): DetailedQuiz {
+        val user = quizUserDao.get(row[Quizzes.user].value) ?: throw Exception("User not found")
+        val quiz = toEntity(row)
+        return DetailedQuiz.fromQuizAndAuthor(quiz, user)
     }
 
     fun add(quiz: Quiz, userId: Int): Int {
@@ -56,4 +65,9 @@ class QuizDao(private val quizQuestionDao: QuizQuestionDao) : Dao<Quiz>(Quizzes)
             )
         }
     }
+
+    fun getAllDetailedQuizzes(): List<DetailedQuiz> = transaction {
+        table.selectAll().toList().map { toDetailedQuiz(it) }
+    }
+
 }

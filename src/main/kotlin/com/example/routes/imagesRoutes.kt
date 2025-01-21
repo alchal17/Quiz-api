@@ -1,11 +1,8 @@
 package com.example.routes
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.response.respondFile
-import io.ktor.server.response.respondText
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
-import io.ktor.server.routing.route
+import io.ktor.http.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import java.io.File
 
 fun Route.imageRoutes() {
@@ -16,18 +13,18 @@ fun Route.imageRoutes() {
                     "Image path not provided",
                     status = HttpStatusCode.BadRequest
                 )
-
             val projectBasePath = File("").absolutePath
-            val resolvedFilePath = File(projectBasePath, path)
+            val filePath = File(projectBasePath, path)
 
-            if (!resolvedFilePath.exists() || !resolvedFilePath.isFile) {
+            if (!filePath.exists() || !filePath.isFile) {
                 return@get call.respondText(
                     "Image not found",
                     status = HttpStatusCode.NotFound
                 )
             }
 
-            call.respondFile(resolvedFilePath)
+            call.respondFile(filePath)
+
         }
     }
 }

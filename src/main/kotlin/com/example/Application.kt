@@ -19,6 +19,7 @@ fun main() {
 
 fun Application.module() {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+
     install(Koin) {
         slf4jLogger()
         modules(appModule)

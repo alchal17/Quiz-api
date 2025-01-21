@@ -12,6 +12,6 @@ val appModule = module {
     single { QuizUserDao() }
     single { QuizQuestionOptionDao() }
     single { QuizQuestionDao(get()) }
-    single { QuizDao(get()) }
+    single { QuizDao(get(), get()) }
     single<BasicImageSaver> { ImageSaver() }
 }
