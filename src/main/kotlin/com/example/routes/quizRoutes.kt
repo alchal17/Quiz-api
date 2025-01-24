@@ -39,8 +39,48 @@ fun Route.quizRoutes(quizDao: QuizDao, imageSaver: BasicImageSaver) {
             call.respond(HttpStatusCode.Created, quizDao.add(quiz = quiz, userId = base64Quiz.userId))
         }
 
+        put("/update") {
+            val quizId = call.request.queryParameters["id"]?.toIntOrNull()
+            if (quizId != null) {
+                val base64Quiz = call.receive<Base64Quiz>()
+                val base64QuizQuestions = base64Quiz.questions
+
+                val quizQuestions = base64QuizQuestions.map { base64QuizQuestion ->
+                    val imagePath: String? =
+                        if (base64QuizQuestion.base64Image == null) null else imageSaver.saveImage(
+                            base64QuizQuestion.base64Image,
+                            "/quiz_questions_images"
+                        )
+                    Base64QuizQuestion.toQuizQuestion(base64QuizQuestion, imagePath)
+                }
+                val base64QuizImagePath =
+                    if (base64Quiz.base64Image == null) null else imageSaver.saveImage(
+                        base64Quiz.base64Image,
+                        "/quiz_images"
+                    )
+
+                val quiz = Base64Quiz.toQuiz(
+                    base64Quiz = base64Quiz,
+                    imagePath = base64QuizImagePath,
+                    quizQuestions = quizQuestions
+                )
+
+                call.respond(HttpStatusCode.OK, quizDao.update(id = quizId, quiz = quiz, userId = base64Quiz.userId))
+            } else {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
+
+        get("/find_by_user_id") {
+            val id = call.request.queryParameters["id"]?.toIntOrNull()
+            if (id != null) {
+                call.respond(quizDao.findByUserId(id))
+            } else {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
+
         get("/all") {
-//            call.respond(quizDao.getAll())
             call.respond(quizDao.getAllDetailedQuizzes())
         }
 

@@ -1,5 +1,6 @@
 package com.example.daos
 
+import com.example.files_handlers.BasicFileDeleter
 import com.example.models.database_representation.Quiz
 import com.example.models.database_representation.Quizzes
 import com.example.models.request_representation.DetailedQuiz
@@ -10,7 +11,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
 
-class QuizDao(private val quizQuestionDao: QuizQuestionDao, private val quizUserDao: QuizUserDao) : Dao<Quiz>(Quizzes) {
+class QuizDao(
+    private val quizQuestionDao: QuizQuestionDao,
+    private val quizUserDao: QuizUserDao,
+    private val fileDeleter: BasicFileDeleter
+) : Dao<Quiz>(Quizzes) {
+
     override fun toEntity(row: ResultRow): Quiz {
         return Quiz(
             id = row[Quizzes.id].value,
@@ -49,6 +55,7 @@ class QuizDao(private val quizQuestionDao: QuizQuestionDao, private val quizUser
     }
 
     fun update(id: Int, quiz: Quiz, userId: Int) {
+        quiz.imagePath?.let { imagePath -> fileDeleter.delete(imagePath) }
         transaction {
             Quizzes.update({ Quizzes.id eq id }) { row ->
                 row[name] = quiz.name
@@ -56,6 +63,7 @@ class QuizDao(private val quizQuestionDao: QuizQuestionDao, private val quizUser
             }
         }
         quiz.questions.forEach { question ->
+            question.imagePath?.let { imagePath -> fileDeleter.delete(imagePath) }
             quizQuestionDao.delete(question)
         }
         quiz.questions.forEach { question ->
@@ -64,6 +72,10 @@ class QuizDao(private val quizQuestionDao: QuizQuestionDao, private val quizUser
                 quizId = quiz.id ?: throw Exception("Quiz does not exist"),
             )
         }
+    }
+
+    fun findByUserId(userId: Int): List<Quiz> {
+        return transaction { Quizzes.selectAll().where { Quizzes.user eq userId }.toList().map { toEntity(it) } }
     }
 
     fun getAllDetailedQuizzes(): List<DetailedQuiz> = transaction {
