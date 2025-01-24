@@ -60,10 +60,11 @@ class QuizDao(
             Quizzes.update({ Quizzes.id eq id }) { row ->
                 row[name] = quiz.name
                 row[user] = userId
+                row[description] = quiz.description
+                row[imagePath] = imagePath
             }
         }
         quiz.questions.forEach { question ->
-            question.imagePath?.let { imagePath -> fileDeleter.delete(imagePath) }
             quizQuestionDao.delete(question)
         }
         quiz.questions.forEach { question ->

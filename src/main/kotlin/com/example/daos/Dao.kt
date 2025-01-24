@@ -14,7 +14,7 @@ abstract class Dao<T : Model>(protected val table: IntIdTable) {
         transaction { table.deleteWhere { table.id eq id } }
     }
 
-    fun delete(entity: T) {
+    open fun delete(entity: T) {
         transaction { table.deleteWhere { table.id eq entity.id } }
     }
 
