@@ -31,7 +31,7 @@ class QuizDao(
 
 
     private fun toDetailedQuiz(row: ResultRow): DetailedQuiz {
-        val user = quizUserDao.get(row[Quizzes.user].value) ?: throw Exception("User not found")
+        val user = quizUserDao.getById(row[Quizzes.user].value) ?: throw Exception("User not found")
         val quiz = toEntity(row)
         return DetailedQuiz.fromQuizAndAuthor(quiz, user)
     }
@@ -115,6 +115,17 @@ class QuizDao(
                 base64Questions = base64Questions
             )
         }
+    }
+
+    override fun delete(entity: Quiz) {
+        entity.imagePath?.let { imagePath -> fileHandler.delete(imagePath) }
+        super.delete(entity)
+    }
+
+    override fun delete(id: Int) {
+        val quiz = getById(id)
+        quiz?.imagePath?.let { imagePath -> fileHandler.delete(imagePath) }
+        super.delete(id)
     }
 
 }

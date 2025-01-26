@@ -71,6 +71,15 @@ fun Route.quizRoutes(quizDao: QuizDao, fileHandler: BasicFileHandler) {
             }
         }
 
+        delete("/delete") {
+            val quizId = call.request.queryParameters["id"]?.toIntOrNull()
+            if (quizId != null) {
+                quizDao.delete(quizId)
+            } else {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
+
         get("/find_by_user_id") {
             val id = call.request.queryParameters["id"]?.toIntOrNull()
             if (id != null) {

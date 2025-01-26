@@ -40,7 +40,7 @@ fun Route.userRoutes(quizUserDao: QuizUserDao) {
         get("/get_by_id") {
             val id = call.request.queryParameters["id"]?.toIntOrNull()
             if (id != null) {
-                val user = quizUserDao.get(id)
+                val user = quizUserDao.getById(id)
                 if (user != null) {
                     call.respond(status = HttpStatusCode.OK, message = user)
                 } else {

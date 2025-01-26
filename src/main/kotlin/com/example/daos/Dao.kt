@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 abstract class Dao<T : Model>(protected val table: IntIdTable) {
     protected abstract fun toEntity(row: ResultRow): T
-    fun delete(id: Int) {
+    open fun delete(id: Int) {
         transaction { table.deleteWhere { table.id eq id } }
     }
 
@@ -19,7 +19,7 @@ abstract class Dao<T : Model>(protected val table: IntIdTable) {
     }
 
 
-    fun get(id: Int) =
+    fun getById(id: Int) =
         transaction { table.selectAll().where { this@Dao.table.id eq id }.singleOrNull() }?.let { toEntity(it) }
 
     fun getAll() = transaction { table.selectAll().toList().map(::toEntity) }
