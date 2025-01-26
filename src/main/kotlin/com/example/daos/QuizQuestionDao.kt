@@ -1,6 +1,6 @@
 package com.example.daos
 
-import com.example.files_handlers.BasicFileDeleter
+import com.example.files_handlers.BasicFileHandler
 import com.example.models.database_representation.QuizQuestion
 import com.example.models.database_representation.QuizQuestions
 import org.jetbrains.exposed.sql.ResultRow
@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.update
 
 class QuizQuestionDao(
     private val quizQuestionOptionDao: QuizQuestionOptionDao,
-    private val fileDeleter: BasicFileDeleter
+    private val fileHandler: BasicFileHandler
 ) :
     Dao<QuizQuestion>(QuizQuestions) {
 
@@ -77,7 +77,7 @@ class QuizQuestionDao(
 
     override fun delete(entity: QuizQuestion) {
         entity.imagePath?.let { imagePath ->
-            fileDeleter.delete(imagePath)
+            fileHandler.delete(imagePath)
         }
         super.delete(entity)
     }

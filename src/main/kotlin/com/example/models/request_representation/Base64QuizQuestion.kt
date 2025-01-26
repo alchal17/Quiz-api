@@ -16,7 +16,7 @@ data class Base64QuizQuestion(
     val multipleChoices: Boolean,
     val options: List<QuizQuestionOption>,
     @SerialName("seconds_to_answer")
-val secondsToAnswer: Int
+    val secondsToAnswer: Int
 ) : Model {
     companion object {
         fun toQuizQuestion(base64QuizQuestion: Base64QuizQuestion, imagePath: String?): QuizQuestion {
@@ -27,6 +27,17 @@ val secondsToAnswer: Int
                 multipleChoices = base64QuizQuestion.multipleChoices,
                 options = base64QuizQuestion.options,
                 secondsToAnswer = base64QuizQuestion.secondsToAnswer
+            )
+        }
+
+        fun fromQuizQuestion(quizQuestion: QuizQuestion, base64Image: String?): Base64QuizQuestion {
+            return Base64QuizQuestion(
+                id = quizQuestion.id,
+                text = quizQuestion.text,
+                base64Image = base64Image,
+                multipleChoices = quizQuestion.multipleChoices,
+                options = quizQuestion.options,
+                secondsToAnswer = quizQuestion.secondsToAnswer
             )
         }
     }

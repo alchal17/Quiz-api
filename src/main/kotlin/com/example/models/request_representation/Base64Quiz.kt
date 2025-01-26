@@ -24,7 +24,23 @@ data class Base64Quiz(
                 name = base64Quiz.name,
                 imagePath = imagePath,
                 description = base64Quiz.description,
-                questions = quizQuestions
+                questions = quizQuestions,
+            )
+        }
+
+        fun fromQuiz(
+            quiz: Quiz,
+            userId: Int,
+            base64Image: String?,
+            base64Questions: List<Base64QuizQuestion>
+        ): Base64Quiz {
+            return Base64Quiz(
+                id = quiz.id,
+                name = quiz.name,
+                userId = userId,
+                base64Image = base64Image,
+                description = quiz.description,
+                questions = base64Questions,
             )
         }
     }

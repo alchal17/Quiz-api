@@ -1,8 +1,10 @@
 package com.example.daos
 
-import com.example.files_handlers.BasicFileDeleter
+import com.example.files_handlers.BasicFileHandler
 import com.example.models.database_representation.Quiz
 import com.example.models.database_representation.Quizzes
+import com.example.models.request_representation.Base64Quiz
+import com.example.models.request_representation.Base64QuizQuestion
 import com.example.models.request_representation.DetailedQuiz
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -14,7 +16,7 @@ import org.jetbrains.exposed.sql.update
 class QuizDao(
     private val quizQuestionDao: QuizQuestionDao,
     private val quizUserDao: QuizUserDao,
-    private val fileDeleter: BasicFileDeleter
+    private val fileHandler: BasicFileHandler,
 ) : Dao<Quiz>(Quizzes) {
 
     override fun toEntity(row: ResultRow): Quiz {
@@ -23,7 +25,7 @@ class QuizDao(
             name = row[Quizzes.name],
             imagePath = row[Quizzes.imagePath],
             description = row[Quizzes.description],
-            questions = quizQuestionDao.findByQuizId(row[Quizzes.id].value)
+            questions = quizQuestionDao.findByQuizId(row[Quizzes.id].value),
         )
     }
 
@@ -55,7 +57,7 @@ class QuizDao(
     }
 
     fun update(id: Int, quiz: Quiz, userId: Int) {
-        quiz.imagePath?.let { imagePath -> fileDeleter.delete(imagePath) }
+        quiz.imagePath?.let { imagePath -> fileHandler.delete(imagePath) }
         transaction {
             Quizzes.update({ Quizzes.id eq id }) { row ->
                 row[name] = quiz.name
@@ -81,6 +83,38 @@ class QuizDao(
 
     fun getAllDetailedQuizzes(): List<DetailedQuiz> = transaction {
         table.selectAll().toList().map { toDetailedQuiz(it) }
+    }
+
+    fun getBase64QuizById(quizId: Int): Base64Quiz {
+        return transaction {
+            val row = Quizzes.selectAll().where { table.id eq quizId }.singleOrNull()
+                ?: throw Exception("Quiz with ID $quizId not found")
+
+            val quiz = toEntity(row)
+
+            val userId = row[Quizzes.user].value
+
+            val base64Image = if (quiz.imagePath != null) {
+                fileHandler.encodeImageToBase64(quiz.imagePath)
+            } else {
+                null
+            }
+            val base64Questions = quiz.questions.map { question ->
+                val base64QuizImage = if (question.imagePath != null) {
+                    fileHandler.encodeImageToBase64(question.imagePath)
+                } else {
+                    null
+                }
+                Base64QuizQuestion.fromQuizQuestion(question, base64QuizImage)
+            }
+
+            Base64Quiz.fromQuiz(
+                quiz = quiz,
+                userId = userId,
+                base64Image = base64Image,
+                base64Questions = base64Questions
+            )
+        }
     }
 
 }

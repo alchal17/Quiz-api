@@ -1,12 +1,12 @@
 package com.example.files_handlers
 
+import kotlinx.io.files.FileNotFoundException
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
+class FileHandler : BasicFileHandler {
 
-
-class ImageSaver : BasicImageSaver {
     private fun isValidBase64(base64: String): Boolean {
         return try {
             Base64.getDecoder().decode(base64)
@@ -41,6 +41,28 @@ class ImageSaver : BasicImageSaver {
 
         // Return relative path
         return File(directoryPath, fileName).path
+
     }
+
+    override fun delete(path: String) {
+        val file = File(path)
+        if (file.exists()) {
+            file.delete()
+        } else {
+            throw Exception("File does not exist")
+        }
+
+    }
+
+    override fun encodeImageToBase64(imagePath: String): String {
+        val projectBasePath = File("").absolutePath
+        val absoluteImagePath = File(projectBasePath, imagePath)
+
+        if (!absoluteImagePath.exists()) {
+            throw FileNotFoundException("File not found: ${absoluteImagePath.path}")
+        }
+
+        val imageBytes = absoluteImagePath.readBytes()
+        return Base64.getEncoder().encodeToString(imageBytes)    }
 
 }
