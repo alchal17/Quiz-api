@@ -1,9 +1,9 @@
 package com.example.database
 
-import com.example.models.database_representation.QuizQuestionOptions
-import com.example.models.database_representation.QuizQuestions
-import com.example.models.database_representation.QuizUsers
-import com.example.models.database_representation.Quizzes
+import com.example.models.tables.QuizQuestionOptions
+import com.example.models.tables.QuizQuestions
+import com.example.models.tables.QuizUsers
+import com.example.models.tables.Quizzes
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction

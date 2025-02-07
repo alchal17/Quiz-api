@@ -1,7 +1,7 @@
 package com.example.routes
 
 import com.example.daos.QuizUserDao
-import com.example.models.database_representation.QuizUser
+import com.example.models.dtos.QuizUser
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -37,8 +37,8 @@ fun Route.userRoutes(quizUserDao: QuizUserDao) {
             }
         }
 
-        get("/get_by_id") {
-            val id = call.request.queryParameters["id"]?.toIntOrNull()
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
             if (id != null) {
                 val user = quizUserDao.getById(id)
                 if (user != null) {
@@ -51,6 +51,10 @@ fun Route.userRoutes(quizUserDao: QuizUserDao) {
             }
         }
 
+        get("/all") {
+            call.respond(quizUserDao.getAll())
+        }
+
         post("/create") {
             val user = call.receive<QuizUser>()
             if (quizUserDao.getUserByEmail(user.email) != null) {
@@ -61,5 +65,31 @@ fun Route.userRoutes(quizUserDao: QuizUserDao) {
                 call.respond(HttpStatusCode.Created, quizUserDao.add(user))
             }
         }
+
+        put("/update/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@put call.respond(
+                HttpStatusCode.BadRequest,
+                "Please enter a valid id"
+            )
+            if (!quizUserDao.existsById(id)) {
+                return@put call.respond(HttpStatusCode.NotFound, "User with id $id does not exist")
+            }
+            val user = call.receive<QuizUser>()
+            quizUserDao.update(id, user)
+            call.respond("User with id $id updated successfully")
+        }
+
+        delete("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@delete call.respond(
+                HttpStatusCode.BadRequest,
+                "Please enter a valid id"
+            )
+            if (!quizUserDao.existsById(id)) {
+                return@delete call.respond(HttpStatusCode.NotFound, "User with id $id not found")
+            }
+            quizUserDao.delete(id)
+            call.respond("User with id $id successfully deleted")
+        }
+
     }
 }

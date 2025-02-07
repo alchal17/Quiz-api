@@ -6,13 +6,14 @@ import com.example.daos.QuizQuestionOptionDao
 import com.example.daos.QuizUserDao
 import com.example.files_handlers.BasicFileHandler
 import com.example.files_handlers.FileHandler
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val appModule = module {
-    single<BasicFileHandler> { FileHandler() }
+    singleOf<BasicFileHandler>(::FileHandler)
 
-    single { QuizUserDao() }
-    single { QuizQuestionOptionDao() }
-    single { QuizQuestionDao(quizQuestionOptionDao = get(), fileHandler = get()) }
-    single { QuizDao(quizQuestionDao = get(), quizUserDao = get(), fileHandler = get()) }
+    singleOf(::QuizUserDao)
+    singleOf(::QuizQuestionOptionDao)
+    singleOf(::QuizQuestionDao)
+    singleOf(::QuizDao)
 }

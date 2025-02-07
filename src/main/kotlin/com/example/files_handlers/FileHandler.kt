@@ -39,13 +39,13 @@ class FileHandler : BasicFileHandler {
             outputStream.write(decodedBytes)
         }
 
-        // Return relative path
         return File(directoryPath, fileName).path
 
     }
 
     override fun delete(path: String) {
-        val file = File(path)
+        val projectBasePath = File("").absolutePath
+        val file = File(projectBasePath, path)
         if (file.exists()) {
             file.delete()
         } else {

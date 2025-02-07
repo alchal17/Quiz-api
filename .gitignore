@@ -36,4 +36,4 @@ out/
 .vscode/
 /.env
 /quiz_images/
-/quiz_questions_images/
+/question_images/

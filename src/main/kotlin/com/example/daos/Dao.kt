@@ -11,16 +11,29 @@ import org.jetbrains.exposed.sql.transactions.transaction
 abstract class Dao<T : Model>(protected val table: IntIdTable) {
     protected abstract fun toEntity(row: ResultRow): T
     open fun delete(id: Int) {
-        transaction { table.deleteWhere { table.id eq id } }
+        transaction {
+            table.deleteWhere { table.id eq id }
+        }
     }
 
     open fun delete(entity: T) {
-        transaction { table.deleteWhere { table.id eq entity.id } }
-    }
+        transaction {
+            val exists = !table.selectAll().where { table.id eq entity.id }.empty()
+            if (exists) {
+                table.deleteWhere { table.id eq id }
+            } else {
+                throw NoSuchElementException("Entity with id $id not found")
+            }
+        }
 
+    }
 
     fun getById(id: Int) =
         transaction { table.selectAll().where { this@Dao.table.id eq id }.singleOrNull() }?.let { toEntity(it) }
 
     fun getAll() = transaction { table.selectAll().toList().map(::toEntity) }
+
+    fun existsById(id: Int): Boolean {
+        return transaction { !table.selectAll().where { table.id eq id }.empty() }
+    }
 }

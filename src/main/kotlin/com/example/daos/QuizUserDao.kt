@@ -1,7 +1,7 @@
 package com.example.daos
 
-import com.example.models.database_representation.QuizUser
-import com.example.models.database_representation.QuizUsers
+import com.example.models.dtos.QuizUser
+import com.example.models.tables.QuizUsers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -36,7 +36,7 @@ class QuizUserDao : Dao<QuizUser>(table = QuizUsers) {
 
     fun getUserByUsername(username: String): QuizUser? {
         return transaction {
-            QuizUsers.selectAll().where { QuizUsers.email eq username }.map { toEntity(it) }.firstOrNull()
+            QuizUsers.selectAll().where { QuizUsers.username eq username }.map { toEntity(it) }.firstOrNull()
         }
     }
 
