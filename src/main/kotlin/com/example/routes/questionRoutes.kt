@@ -3,6 +3,8 @@ package com.example.routes
 import com.example.daos.QuizQuestionDao
 import com.example.files_handlers.BasicFileHandler
 import com.example.models.dtos.Base64QuizQuestion
+import com.example.models.dtos.toBase64QuizQuestion
+import com.example.models.dtos.toBase64QuizQuestions
 import com.example.models.dtos.toQuizQuestion
 import io.ktor.http.*
 import io.ktor.server.request.*
@@ -29,10 +31,31 @@ fun Route.questionRoutes(questionDao: QuizQuestionDao, fileHandler: BasicFileHan
             }
         }
 
+        get("/find_base64_question_by_id") {
+            val id = call.request.queryParameters["id"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid id"
+            )
+            val question = questionDao.getById(id) ?: return@get call.respond(
+                HttpStatusCode.NotFound,
+                "Question with id $id not found"
+            )
+            call.respond(question.toBase64QuizQuestion(question.imagePath?.let { fileHandler.encodeImageToBase64(it) }))
+        }
+
         get("/find_by_quiz_id") {
-            val id = call.parameters["id"]?.toIntOrNull()
+            val id = call.request.queryParameters["id"]?.toIntOrNull()
             if (id != null) {
                 call.respond(questionDao.findByQuizId(id))
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid id")
+            }
+        }
+
+        get("/find_base64_questions_by_quiz_id") {
+            val id = call.request.queryParameters["id"]?.toIntOrNull()
+            if (id != null) {
+                call.respond(questionDao.findByQuizId(id).toBase64QuizQuestions(fileHandler))
             } else {
                 call.respond(HttpStatusCode.BadRequest, "Invalid id")
             }

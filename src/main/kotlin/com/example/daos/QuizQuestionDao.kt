@@ -22,7 +22,8 @@ class QuizQuestionDao(
             imagePath = row[QuizQuestions.imagePath],
             multipleChoices = row[QuizQuestions.multipleChoices],
             secondsToAnswer = row[QuizQuestions.secondsToAnswer],
-            quizId = row[QuizQuestions.quiz].value
+            quizId = row[QuizQuestions.quiz].value,
+            orderNumber = row[QuizQuestions.orderNumber]
         )
     }
 
@@ -34,6 +35,7 @@ class QuizQuestionDao(
                 row[imagePath] = quizQuestion.imagePath
                 row[multipleChoices] = quizQuestion.multipleChoices
                 row[secondsToAnswer] = quizQuestion.secondsToAnswer
+                row[orderNumber] = quizQuestion.orderNumber
             } get QuizQuestions.id
             questionId.value
         }
@@ -47,6 +49,7 @@ class QuizQuestionDao(
                 row[imagePath] = quizQuestion.imagePath
                 row[multipleChoices] = quizQuestion.multipleChoices
                 row[secondsToAnswer] = quizQuestion.secondsToAnswer
+                row[orderNumber] = quizQuestion.orderNumber
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.models.dtos
 
+import com.example.files_handlers.BasicFileHandler
 import com.example.models.Model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,16 +16,26 @@ data class QuizQuestion(
     @SerialName("multiple_choices")
     val multipleChoices: Boolean,
     @SerialName("seconds_to_answer")
-    val secondsToAnswer: Int
+    val secondsToAnswer: Int,
+    @SerialName("oder_number")
+    val orderNumber: Int
 ) : Model
 
-fun QuizQuestion.toBase64QuizQuestion(base64Image: String?): Base64QuizQuestion{
+fun QuizQuestion.toBase64QuizQuestion(base64Image: String?): Base64QuizQuestion {
     return Base64QuizQuestion(
         id = id,
         quizId = quizId,
         text = text,
         base64Image = base64Image,
         multipleChoices = multipleChoices,
-        secondsToAnswer = secondsToAnswer
+        secondsToAnswer = secondsToAnswer,
+        orderNumber = this@toBase64QuizQuestion.orderNumber
     )
+}
+
+fun List<QuizQuestion>.toBase64QuizQuestions(fileHandler: BasicFileHandler): List<Base64QuizQuestion> {
+    return this.map { quizQuestion ->
+        val base64Image = quizQuestion.imagePath?.let { fileHandler.encodeImageToBase64(it) }
+        quizQuestion.toBase64QuizQuestion(base64Image)
+    }
 }

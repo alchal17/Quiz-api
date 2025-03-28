@@ -15,7 +15,9 @@ data class Base64QuizQuestion(
     @SerialName("multiple_choices")
     val multipleChoices: Boolean,
     @SerialName("seconds_to_answer")
-    val secondsToAnswer: Int
+    val secondsToAnswer: Int,
+    @SerialName("oder_number")
+    val orderNumber: Int
 ) : Model
 
 fun Base64QuizQuestion.toQuizQuestion(imagePath: String?): QuizQuestion {
@@ -25,6 +27,7 @@ fun Base64QuizQuestion.toQuizQuestion(imagePath: String?): QuizQuestion {
         text = text,
         imagePath = imagePath,
         multipleChoices = multipleChoices,
-        secondsToAnswer = secondsToAnswer
+        secondsToAnswer = secondsToAnswer,
+        orderNumber = orderNumber
     )
 }

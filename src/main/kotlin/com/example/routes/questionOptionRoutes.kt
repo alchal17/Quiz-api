@@ -14,6 +14,10 @@ fun Route.questionOptionRoutes(quizQuestionOptionDao: QuizQuestionOptionDao) {
             call.respond(quizQuestionOptionDao.getAll())
         }
 
+        get("/test"){
+            call.respond("test")
+        }
+
         get("/{id}") {
             val id =
                 call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest, "Invalid id")
@@ -23,6 +27,14 @@ fun Route.questionOptionRoutes(quizQuestionOptionDao: QuizQuestionOptionDao) {
                 "Question option with id $id does not exist"
             )
             call.respond(HttpStatusCode.OK, option)
+        }
+
+        get("/find_by_question_id") {
+            val id = call.request.queryParameters["id"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid id"
+            )
+            call.respond(HttpStatusCode.OK, quizQuestionOptionDao.findByQuizQuestionId(id))
         }
 
         post("/create") {

@@ -9,5 +9,6 @@ object QuizQuestions : IntIdTable("quiz_questions") {
     val imagePath = varchar("image_path", 100).nullable()
     val multipleChoices = bool("multiple_choices")
     val secondsToAnswer = integer("seconds_answer")
+    val orderNumber = integer("order_number")
 }
 

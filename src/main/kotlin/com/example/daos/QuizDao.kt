@@ -2,6 +2,7 @@ package com.example.daos
 
 import com.example.files_handlers.BasicFileHandler
 import com.example.models.dtos.Quiz
+import com.example.models.tables.QuizQuestions
 import com.example.models.tables.Quizzes
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -75,6 +76,10 @@ class QuizDao(
             }
         }
         super.delete(id)
+    }
+
+    fun getNumberOfQuestions(quizId: Int): Int {
+        return transaction { QuizQuestions.selectAll().where { QuizQuestions.id eq quizId }.count().toInt() }
     }
 
 }

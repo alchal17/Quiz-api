@@ -60,6 +60,14 @@ fun Route.quizRoutes(quizDao: QuizDao, fileHandler: BasicFileHandler) {
             }
         }
 
+        get("/get_questions_number") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "No ID provided"
+            )
+            call.respond(quizDao.getNumberOfQuestions(id))
+        }
+
         post("/create") {
             val base64Quiz = call.receive<Base64Quiz>()
             val filePath = base64Quiz.base64Image?.let {
