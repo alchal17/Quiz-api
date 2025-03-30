@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+
 class QuizQuestionDao(
     private val fileHandler: BasicFileHandler
 ) :

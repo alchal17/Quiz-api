@@ -2,11 +2,10 @@ package com.example.daos
 
 import com.example.models.dtos.QuizQuestionOption
 import com.example.models.tables.QuizQuestionOptions
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
+
 
 class QuizQuestionOptionDao :
     Dao<QuizQuestionOption>(QuizQuestionOptions) {
@@ -55,5 +54,21 @@ class QuizQuestionOptionDao :
                 toEntity(row)
             }
         }
+   }
+
+    fun replaceQuestionOptions(questionId: Int, newOptions: List<QuizQuestionOption>) {
+        transaction {
+            QuizQuestionOptions.deleteWhere {
+                quizQuestion eq questionId
+            }
+            newOptions.forEach { option ->
+                QuizQuestionOptions.insert {
+                    it[text] = option.text
+                    it[isCorrect] = option.isCorrect
+                    it[quizQuestion] = questionId
+                }
+            }
+        }
     }
+
 }

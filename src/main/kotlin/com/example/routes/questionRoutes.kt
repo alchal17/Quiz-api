@@ -93,6 +93,7 @@ fun Route.questionRoutes(questionDao: QuizQuestionDao, fileHandler: BasicFileHan
             }
         }
 
+
         delete("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@delete call.respond(
                 HttpStatusCode.BadRequest,

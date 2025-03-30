@@ -14,7 +14,7 @@ fun Route.questionOptionRoutes(quizQuestionOptionDao: QuizQuestionOptionDao) {
             call.respond(quizQuestionOptionDao.getAll())
         }
 
-        get("/test"){
+        get("/test") {
             call.respond("test")
         }
 
@@ -56,6 +56,16 @@ fun Route.questionOptionRoutes(quizQuestionOptionDao: QuizQuestionOptionDao) {
             val option = call.receive<QuizQuestionOption>()
             quizQuestionOptionDao.update(id, option)
             call.respond("Question option with id $id updated successfully")
+        }
+
+        put("/change_options") {
+            val questionId = call.request.queryParameters["id"]?.toIntOrNull() ?: return@put call.respond(
+                HttpStatusCode.BadRequest,
+                "Invalid id"
+            )
+            val newOptions = call.receive<List<QuizQuestionOption>>()
+            quizQuestionOptionDao.replaceQuestionOptions(questionId, newOptions)
+            call.respond(HttpStatusCode.OK, "Options for question $questionId updated successfully")
         }
 
         delete("/{id}") {
