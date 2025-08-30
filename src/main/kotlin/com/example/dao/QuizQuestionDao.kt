@@ -1,7 +1,7 @@
-package com.example.daos
+package com.example.dao
 
-import com.example.files_handlers.BasicFileHandler
-import com.example.models.dtos.QuizQuestion
+import com.example.files_handlers.FileHandler
+import com.example.dto.QuizQuestion
 import com.example.models.tables.QuizQuestions
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.update
 
 
 class QuizQuestionDao(
-    private val fileHandler: BasicFileHandler
+    private val fileHandler: FileHandler
 ) :
     Dao<QuizQuestion>(QuizQuestions) {
 

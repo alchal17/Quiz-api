@@ -1,7 +1,7 @@
 package com.example.routes
 
-import com.example.daos.QuizUserDao
-import com.example.models.dtos.QuizUser
+import com.example.dao.QuizUserDao
+import com.example.dto.QuizUser
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -9,8 +9,8 @@ import io.ktor.server.routing.*
 
 fun Route.userRoutes(quizUserDao: QuizUserDao) {
     route("/quiz_user") {
-        get("/get_by_email") {
-            val email = call.request.queryParameters["email"]
+        get("/email/{email}") {
+            val email = call.parameters["email"]
             if (email != null) {
                 val user = quizUserDao.getUserByEmail(email)
                 if (user != null) {
@@ -23,8 +23,8 @@ fun Route.userRoutes(quizUserDao: QuizUserDao) {
             }
         }
 
-        get("/get_by_username") {
-            val username = call.request.queryParameters["username"]
+        get("/username/{name}") {
+            val username = call.parameters["name"]
             if (username != null) {
                 val user = quizUserDao.getUserByUsername(username)
                 if (user != null) {
@@ -51,11 +51,11 @@ fun Route.userRoutes(quizUserDao: QuizUserDao) {
             }
         }
 
-        get("/all") {
+        get {
             call.respond(quizUserDao.getAll())
         }
 
-        post("/create") {
+        post {
             val user = call.receive<QuizUser>()
             if (quizUserDao.getUserByEmail(user.email) != null) {
                 call.respond(HttpStatusCode.Conflict, "User with this email already exists")
@@ -66,7 +66,7 @@ fun Route.userRoutes(quizUserDao: QuizUserDao) {
             }
         }
 
-        put("/update/{id}") {
+        put("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@put call.respond(
                 HttpStatusCode.BadRequest,
                 "Please enter a valid id"

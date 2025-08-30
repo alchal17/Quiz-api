@@ -1,4 +1,4 @@
-package com.example.daos
+package com.example.dao
 
 import com.example.models.Model
 import org.jetbrains.exposed.dao.id.IntIdTable

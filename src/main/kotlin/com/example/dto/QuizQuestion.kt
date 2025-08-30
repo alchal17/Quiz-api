@@ -1,6 +1,6 @@
-package com.example.models.dtos
+package com.example.dto
 
-import com.example.files_handlers.BasicFileHandler
+import com.example.files_handlers.FileHandler
 import com.example.models.Model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -33,7 +33,7 @@ fun QuizQuestion.toBase64QuizQuestion(base64Image: String?): Base64QuizQuestion 
     )
 }
 
-fun List<QuizQuestion>.toBase64QuizQuestions(fileHandler: BasicFileHandler): List<Base64QuizQuestion> {
+fun List<QuizQuestion>.toBase64QuizQuestions(fileHandler: FileHandler): List<Base64QuizQuestion> {
     return this.map { quizQuestion ->
         val base64Image = quizQuestion.imagePath?.let { fileHandler.encodeImageToBase64(it) }
         quizQuestion.toBase64QuizQuestion(base64Image)

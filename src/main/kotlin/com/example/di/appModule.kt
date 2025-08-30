@@ -1,16 +1,16 @@
 package com.example.di
 
-import com.example.daos.QuizDao
-import com.example.daos.QuizQuestionDao
-import com.example.daos.QuizQuestionOptionDao
-import com.example.daos.QuizUserDao
-import com.example.files_handlers.BasicFileHandler
+import com.example.dao.QuizDao
+import com.example.dao.QuizQuestionDao
+import com.example.dao.QuizQuestionOptionDao
+import com.example.dao.QuizUserDao
 import com.example.files_handlers.FileHandler
+import com.example.files_handlers.FileHandlerImpl
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val appModule = module {
-    singleOf<BasicFileHandler>(::FileHandler)
+    singleOf<FileHandler>(::FileHandlerImpl)
 
     singleOf(::QuizUserDao)
     singleOf(::QuizQuestionOptionDao)

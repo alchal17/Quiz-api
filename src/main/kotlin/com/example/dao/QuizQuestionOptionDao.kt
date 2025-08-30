@@ -1,6 +1,6 @@
-package com.example.daos
+package com.example.dao
 
-import com.example.models.dtos.QuizQuestionOption
+import com.example.dto.QuizQuestionOption
 import com.example.models.tables.QuizQuestionOptions
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

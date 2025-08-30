@@ -1,7 +1,7 @@
-package com.example.daos
+package com.example.dao
 
-import com.example.files_handlers.BasicFileHandler
-import com.example.models.dtos.Quiz
+import com.example.files_handlers.FileHandler
+import com.example.dto.Quiz
 import com.example.models.tables.QuizQuestions
 import com.example.models.tables.Quizzes
 import org.jetbrains.exposed.sql.ResultRow
@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.update
 
 class QuizDao(
     private val quizQuestionDao: QuizQuestionDao,
-    private val fileHandler: BasicFileHandler,
+    private val fileHandler: FileHandler,
 ) : Dao<Quiz>(Quizzes) {
 
     override fun toEntity(row: ResultRow): Quiz {

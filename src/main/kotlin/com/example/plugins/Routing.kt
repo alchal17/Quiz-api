@@ -1,10 +1,10 @@
 package com.example.plugins
 
-import com.example.daos.QuizDao
-import com.example.daos.QuizQuestionDao
-import com.example.daos.QuizQuestionOptionDao
-import com.example.daos.QuizUserDao
-import com.example.files_handlers.BasicFileHandler
+import com.example.dao.QuizDao
+import com.example.dao.QuizQuestionDao
+import com.example.dao.QuizQuestionOptionDao
+import com.example.dao.QuizUserDao
+import com.example.files_handlers.FileHandler
 import com.example.routes.imageRoutes
 import com.example.routes.questionOptionRoutes
 import com.example.routes.questionRoutes
@@ -23,7 +23,7 @@ fun Application.configureRouting() {
     val questionDao: QuizQuestionDao by inject()
     val optionDao: QuizQuestionOptionDao by inject()
 
-    val fileHandler: BasicFileHandler by inject()
+    val fileHandler: FileHandler by inject()
     routing {
         userRoutes(quizUserDao)
         quizRoutes(quizDao, fileHandler)

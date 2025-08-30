@@ -1,7 +1,7 @@
 package com.example.routes
 
-import com.example.daos.QuizQuestionOptionDao
-import com.example.models.dtos.QuizQuestionOption
+import com.example.dao.QuizQuestionOptionDao
+import com.example.dto.QuizQuestionOption
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*

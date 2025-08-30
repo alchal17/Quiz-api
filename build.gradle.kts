@@ -47,6 +47,4 @@ dependencies {
     implementation("io.insert-koin:koin-core:3.5.6")
     implementation("io.insert-koin:koin-ktor:3.5.6")
     implementation("io.insert-koin:koin-logger-slf4j:3.5.6")
-
-//    implementation("org.jetbrains.exposed:exposed-json:0.52.0")
 }

@@ -1,21 +1,21 @@
 package com.example.routes
 
-import com.example.daos.QuizDao
-import com.example.files_handlers.BasicFileHandler
-import com.example.models.dtos.Base64Quiz
-import com.example.models.dtos.toBase64Quiz
-import com.example.models.dtos.toQuiz
+import com.example.dao.QuizDao
+import com.example.dto.Base64Quiz
+import com.example.dto.toBase64Quiz
+import com.example.dto.toQuiz
+import com.example.files_handlers.FileHandler
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-fun Route.quizRoutes(quizDao: QuizDao, fileHandler: BasicFileHandler) {
+fun Route.quizRoutes(quizDao: QuizDao, fileHandler: FileHandler) {
     route("/quiz") {
 
-        get("/find_by_user_id") {
-            val id = call.request.queryParameters["id"]?.toIntOrNull()
+        get("user_id/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
             if (id != null) {
                 call.respond(quizDao.findByUserId(id))
             } else {
@@ -23,12 +23,12 @@ fun Route.quizRoutes(quizDao: QuizDao, fileHandler: BasicFileHandler) {
             }
         }
 
-        get("/all") {
+        get {
             call.respond(quizDao.getAll())
         }
 
-        get("/find_base64_quiz_by_id") {
-            val id = call.request.queryParameters["id"]?.toIntOrNull()
+        get("/base_64_quiz/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
             if (id != null) {
                 val quiz = quizDao.getById(id)
                 if (quiz != null) {
@@ -60,7 +60,7 @@ fun Route.quizRoutes(quizDao: QuizDao, fileHandler: BasicFileHandler) {
             }
         }
 
-        get("/get_questions_number") {
+        get("/number") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
                 "No ID provided"
@@ -68,7 +68,7 @@ fun Route.quizRoutes(quizDao: QuizDao, fileHandler: BasicFileHandler) {
             call.respond(quizDao.getNumberOfQuestions(id))
         }
 
-        post("/create") {
+        post {
             val base64Quiz = call.receive<Base64Quiz>()
             val filePath = base64Quiz.base64Image?.let {
                 fileHandler.saveImage(it, "/quiz_images")
@@ -77,7 +77,7 @@ fun Route.quizRoutes(quizDao: QuizDao, fileHandler: BasicFileHandler) {
             call.respond(HttpStatusCode.Created, quizDao.add(quiz))
         }
 
-        put("/update/{id}") {
+        put("/{id}") {
             val quizId = call.parameters["id"]?.toIntOrNull()
             if (quizId != null) {
                 val oldQuiz = quizDao.getById(quizId)

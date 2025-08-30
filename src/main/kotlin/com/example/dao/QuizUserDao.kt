@@ -1,6 +1,6 @@
-package com.example.daos
+package com.example.dao
 
-import com.example.models.dtos.QuizUser
+import com.example.dto.QuizUser
 import com.example.models.tables.QuizUsers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
