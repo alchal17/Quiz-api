@@ -1,37 +1,37 @@
 package com.example.dao
 
-import com.example.dto.QuizQuestionOption
-import com.example.models.tables.QuizQuestionOptions
+import com.example.presentation.dto.QuizQuestionOptionDto
+import com.example.data.database.tables.QuizQuestionOptionsTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
 class QuizQuestionOptionDao :
-    Dao<QuizQuestionOption>(QuizQuestionOptions) {
-    override fun toEntity(row: ResultRow): QuizQuestionOption {
-        return QuizQuestionOption(
-            id = row[QuizQuestionOptions.id].value,
-            text = row[QuizQuestionOptions.text],
-            isCorrect = row[QuizQuestionOptions.isCorrect],
-            quizQuestionId = row[QuizQuestionOptions.quizQuestion].value,
+    Dao<QuizQuestionOptionDto>(QuizQuestionOptionsTable) {
+    override fun toEntity(row: ResultRow): QuizQuestionOptionDto {
+        return QuizQuestionOptionDto(
+            id = row[QuizQuestionOptionsTable.id].value,
+            text = row[QuizQuestionOptionsTable.text],
+            isCorrect = row[QuizQuestionOptionsTable.isCorrect],
+            quizQuestionId = row[QuizQuestionOptionsTable.quizQuestion].value,
         )
     }
 
-    fun add(quizQuestionOption: QuizQuestionOption): Int {
+    fun add(quizQuestionOptionDto: QuizQuestionOptionDto): Int {
         return transaction {
-            QuizQuestionOptions.insertAndGetId { row ->
-                row[text] = quizQuestionOption.text
-                row[isCorrect] = quizQuestionOption.isCorrect
-                row[quizQuestion] = quizQuestionOption.quizQuestionId
+            QuizQuestionOptionsTable.insertAndGetId { row ->
+                row[text] = quizQuestionOptionDto.text
+                row[isCorrect] = quizQuestionOptionDto.isCorrect
+                row[quizQuestion] = quizQuestionOptionDto.quizQuestionId
             }.value
         }
     }
 
-    fun addMultiple(quizQuestionOptionList: List<QuizQuestionOption>): List<Int> {
+    fun addMultiple(quizQuestionOptionDtoList: List<QuizQuestionOptionDto>): List<Int> {
         return transaction {
-            quizQuestionOptionList.map {quizQuestionOption ->
-                QuizQuestionOptions.insertAndGetId { row ->
+            quizQuestionOptionDtoList.map { quizQuestionOption ->
+                QuizQuestionOptionsTable.insertAndGetId { row ->
                     row[text] = quizQuestionOption.text
                     row[isCorrect] = quizQuestionOption.isCorrect
                     row[quizQuestion] = quizQuestionOption.quizQuestionId
@@ -40,29 +40,29 @@ class QuizQuestionOptionDao :
         }
     }
 
-    fun update(id: Int, entity: QuizQuestionOption) {
-        QuizQuestionOptions.update({ QuizQuestionOptions.id eq id }) { row ->
+    fun update(id: Int, entity: QuizQuestionOptionDto) {
+        QuizQuestionOptionsTable.update({ QuizQuestionOptionsTable.id eq id }) { row ->
             row[text] = entity.text
             row[isCorrect] = entity.isCorrect
             row[quizQuestion] = entity.quizQuestionId
         }
     }
 
-    fun findByQuizQuestionId(quizQuestionId: Int): List<QuizQuestionOption> {
+    fun findByQuizQuestionId(quizQuestionId: Int): List<QuizQuestionOptionDto> {
         return transaction {
-            QuizQuestionOptions.selectAll().where { QuizQuestionOptions.quizQuestion eq quizQuestionId }.map { row ->
+            QuizQuestionOptionsTable.selectAll().where { QuizQuestionOptionsTable.quizQuestion eq quizQuestionId }.map { row ->
                 toEntity(row)
             }
         }
    }
 
-    fun replaceQuestionOptions(questionId: Int, newOptions: List<QuizQuestionOption>) {
+    fun replaceQuestionOptions(questionId: Int, newOptions: List<QuizQuestionOptionDto>) {
         transaction {
-            QuizQuestionOptions.deleteWhere {
+            QuizQuestionOptionsTable.deleteWhere {
                 quizQuestion eq questionId
             }
             newOptions.forEach { option ->
-                QuizQuestionOptions.insert {
+                QuizQuestionOptionsTable.insert {
                     it[text] = option.text
                     it[isCorrect] = option.isCorrect
                     it[quizQuestion] = questionId

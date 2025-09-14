@@ -1,7 +1,7 @@
 package com.example
 
-import com.example.database.configureDatabase
-import com.example.database.createTables
+import com.example.data.database.configureDatabase
+import com.example.data.database.createTables
 import com.example.di.appModule
 import com.example.plugins.configureRouting
 import com.example.plugins.configureSerialization

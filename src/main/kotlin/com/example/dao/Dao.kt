@@ -1,6 +1,6 @@
 package com.example.dao
 
-import com.example.models.Model
+import com.example.data.models.Model
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

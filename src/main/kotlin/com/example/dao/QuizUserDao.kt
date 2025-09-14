@@ -1,48 +1,48 @@
 package com.example.dao
 
-import com.example.dto.QuizUser
-import com.example.models.tables.QuizUsers
+import com.example.presentation.dto.QuizUserDto
+import com.example.data.database.tables.QuizUsersTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class QuizUserDao : Dao<QuizUser>(table = QuizUsers) {
-    override fun toEntity(row: ResultRow): QuizUser {
-        return QuizUser(id = row[QuizUsers.id].value, username = row[QuizUsers.username], email = row[QuizUsers.email])
+class QuizUserDao : Dao<QuizUserDto>(table = QuizUsersTable) {
+    override fun toEntity(row: ResultRow): QuizUserDto {
+        return QuizUserDto(id = row[QuizUsersTable.id].value, username = row[QuizUsersTable.username], email = row[QuizUsersTable.email])
     }
 
-    fun add(entity: QuizUser): Int {
+    fun add(entity: QuizUserDto): Int {
         return transaction {
-            QuizUsers.insertAndGetId { row ->
+            QuizUsersTable.insertAndGetId { row ->
                 row[username] = entity.username
                 row[email] = entity.email
             }.value
         }
     }
 
-    fun update(id: Int, entity: QuizUser) {
+    fun update(id: Int, entity: QuizUserDto) {
         transaction {
-            QuizUsers.update({ QuizUsers.id eq id }) { row ->
+            QuizUsersTable.update({ QuizUsersTable.id eq id }) { row ->
                 row[username] = entity.username
                 row[email] = entity.email
             }
         }
     }
 
-    fun getUserByEmail(email: String): QuizUser? {
+    fun getUserByEmail(email: String): QuizUserDto? {
         return transaction {
-            QuizUsers.selectAll().where { QuizUsers.email eq email }.map { toEntity(it) }.firstOrNull()
+            QuizUsersTable.selectAll().where { QuizUsersTable.email eq email }.map { toEntity(it) }.firstOrNull()
         }
     }
 
-    fun getUserByUsername(username: String): QuizUser? {
+    fun getUserByUsername(username: String): QuizUserDto? {
         return transaction {
-            QuizUsers.selectAll().where { QuizUsers.username eq username }.map { toEntity(it) }.firstOrNull()
+            QuizUsersTable.selectAll().where { QuizUsersTable.username eq username }.map { toEntity(it) }.firstOrNull()
         }
     }
 
-    fun getByEmailOrUsername(email: String, username: String): QuizUser? {
+    fun getByEmailOrUsername(email: String, username: String): QuizUserDto? {
         return transaction {
-            QuizUsers.selectAll().where { (QuizUsers.email eq email) or (QuizUsers.username eq username) }
+            QuizUsersTable.selectAll().where { (QuizUsersTable.email eq email) or (QuizUsersTable.username eq username) }
                 .map { toEntity(it) }
                 .firstOrNull()
         }
