@@ -36,8 +36,15 @@ fun Route.userRoutes(quizUserController: QuizUserController) {
 //            }
 //        }
 
-//        get("/{id}") {
-//            val id = call.parameters["id"]?.toIntOrNull()
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = "Please enter a valid id"
+            )
+            when (val result = quizUserController.getById(id)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.NotFound, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
 //            if (id != null) {
 //                val user = quizUserDao.getById(id)
 //                if (user != null) {
@@ -48,12 +55,12 @@ fun Route.userRoutes(quizUserController: QuizUserController) {
 //            } else {
 //                call.respond(status = HttpStatusCode.BadRequest, message = "Please enter a valid id")
 //            }
-//        }
+        }
 
         get {
-            when(val response = quizUserController.getAll()){
+            when (val response = quizUserController.getAll()) {
                 is ApiResponse.Failure -> call.respond(HttpStatusCode.BadRequest, response.message)
-                is ApiResponse.Success ->call.respond(response.data)
+                is ApiResponse.Success -> call.respond(response.data)
             }
         }
 

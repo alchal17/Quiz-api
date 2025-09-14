@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-abstract class CRUDRepository<T : Model>(protected val table: IntIdTable) {
+abstract class CRUDRepositoryHelper<T : Model>(protected val table: IntIdTable) {
     protected abstract fun toEntity(row: ResultRow): T
     open fun deleteModel(id: Int): Boolean {
         return try {
@@ -23,7 +23,7 @@ abstract class CRUDRepository<T : Model>(protected val table: IntIdTable) {
 
     fun getModelById(id: Int) =
         transaction {
-            table.selectAll().where { this@CRUDRepository.table.id eq id }.singleOrNull()
+            table.selectAll().where { this@CRUDRepositoryHelper.table.id eq id }.singleOrNull()
         }?.let { toEntity(it) }
 
     fun getAllModels() = transaction { table.selectAll().toList().map(::toEntity) }

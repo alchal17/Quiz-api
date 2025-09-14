@@ -2,14 +2,14 @@ package com.example.data.repositories.quizUserRepository
 
 import com.example.data.database.tables.QuizUsersTable
 import com.example.data.models.QuizUser
-import com.example.data.repositories.CRUDRepository
+import com.example.data.repositories.CRUDRepositoryHelper
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-class QuizUserRepositoryImpl : CRUDRepository<QuizUser>(QuizUsersTable), QuizUserRepository {
+class QuizUserRepositoryHelperImpl : CRUDRepositoryHelper<QuizUser>(QuizUsersTable), QuizUserRepository {
     override fun toEntity(row: ResultRow): QuizUser {
         return QuizUser(
             id = row[QuizUsersTable.id].value,
