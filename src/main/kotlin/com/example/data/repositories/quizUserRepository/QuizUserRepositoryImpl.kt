@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-class QuizUserRepositoryHelperImpl : CRUDRepositoryHelper<QuizUser>(QuizUsersTable), QuizUserRepository {
+class QuizUserRepositoryImpl : CRUDRepositoryHelper<QuizUser>(QuizUsersTable), QuizUserRepository {
     override fun toEntity(row: ResultRow): QuizUser {
         return QuizUser(
             id = row[QuizUsersTable.id].value,

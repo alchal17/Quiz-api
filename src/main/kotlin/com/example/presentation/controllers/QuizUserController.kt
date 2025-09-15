@@ -2,6 +2,7 @@ package com.example.presentation.controllers
 
 import com.example.domain.entities.toQuizUserDto
 import com.example.domain.usecases.quizUser.CreateQuizUserUseCase
+import com.example.domain.usecases.quizUser.DeleteQuizUserUseCase
 import com.example.domain.usecases.quizUser.GetAllQuizUsersUseCase
 import com.example.domain.usecases.quizUser.GetQuizUserByIdUseCase
 import com.example.presentation.dto.ApiResponse
@@ -11,7 +12,8 @@ import com.example.presentation.dto.toEntity
 class QuizUserController(
     private val createQuizUserUseCase: CreateQuizUserUseCase,
     private val getAllQuizUsersUseCase: GetAllQuizUsersUseCase,
-    private val getQuizUserByIdUseCase: GetQuizUserByIdUseCase
+    private val getQuizUserByIdUseCase: GetQuizUserByIdUseCase,
+    private val deleteQuizUserUseCase: DeleteQuizUserUseCase
 ) {
     suspend fun create(quizUserDto: QuizUserDto): ApiResponse<QuizUserDto> {
         val quizUserEntity = quizUserDto.toEntity()
@@ -43,5 +45,12 @@ class QuizUserController(
         }
 
         return ApiResponse.Failure(result.exceptionOrNull()?.message ?: "Unknown error")
+    }
+
+    suspend fun delete(id: Int): ApiResponse<Nothing?> {
+        val result = deleteQuizUserUseCase(id)
+        return if (result.isSuccess) ApiResponse.Success(null) else ApiResponse.Failure(
+            (result.exceptionOrNull() ?: Exception()).message ?: "Unknown exception"
+        )
     }
 }

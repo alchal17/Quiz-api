@@ -8,9 +8,11 @@ import com.example.domain.entities.toQuizUser
 class CreateQuizUserUseCase(private val quizUserRepository: QuizUserRepository) {
     suspend operator fun invoke(quizUserEntity: QuizUserEntity): Result<QuizUserEntity> {
         return try {
-            val existingUserByEmail = quizUserRepository.findByEmail(quizUserEntity.email)
-            if (existingUserByEmail != null) {
+            if (quizUserRepository.findByEmail(quizUserEntity.email) != null) {
                 return Result.failure(Exception("User with such email already exists."))
+            }
+            if (quizUserRepository.findByUsername(quizUserEntity.username) != null) {
+                return Result.failure(Exception("User with such username already exists."))
             }
             val quizUser = quizUserEntity.toQuizUser()
             val createdQuizUser =

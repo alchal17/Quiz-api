@@ -2,7 +2,9 @@ package com.example.presentation.routes
 
 import com.example.presentation.controllers.QuizUserController
 import com.example.presentation.dto.ApiResponse
+import com.example.presentation.dto.QuizUserDto
 import io.ktor.http.*
+import io.ktor.server.request.receive
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -45,16 +47,6 @@ fun Route.userRoutes(quizUserController: QuizUserController) {
                 is ApiResponse.Failure -> call.respond(HttpStatusCode.NotFound, result.message)
                 is ApiResponse.Success -> call.respond(result.data)
             }
-//            if (id != null) {
-//                val user = quizUserDao.getById(id)
-//                if (user != null) {
-//                    call.respond(status = HttpStatusCode.OK, message = user)
-//                } else {
-//                    call.respond(status = HttpStatusCode.NotFound, message = "User not found")
-//                }
-//            } else {
-//                call.respond(status = HttpStatusCode.BadRequest, message = "Please enter a valid id")
-//            }
         }
 
         get {
@@ -64,16 +56,13 @@ fun Route.userRoutes(quizUserController: QuizUserController) {
             }
         }
 
-//        post {
-//            val user = call.receive<QuizUserDto>()
-//            if (quizUserDao.getUserByEmail(user.email) != null) {
-//                call.respond(HttpStatusCode.Conflict, "User with this email already exists")
-//            } else if (quizUserDao.getUserByUsername(user.username) != null) {
-//                call.respond(HttpStatusCode.Conflict, "User with this username already exists")
-//            } else {
-//                call.respond(HttpStatusCode.Created, quizUserDao.add(user))
-//            }
-//        }
+        post {
+            val userDto = call.receive<QuizUserDto>()
+            when (val result = quizUserController.create(userDto)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.Conflict, result.message)
+                is ApiResponse.Success -> call.respond(HttpStatusCode.Created, result.data)
+            }
+        }
 
 //        put("/{id}") {
 //            val id = call.parameters["id"]?.toIntOrNull() ?: return@put call.respond(
@@ -88,17 +77,17 @@ fun Route.userRoutes(quizUserController: QuizUserController) {
 //            call.respond("User with id $id updated successfully")
 //        }
 
-//        delete("/{id}") {
-//            val id = call.parameters["id"]?.toIntOrNull() ?: return@delete call.respond(
-//                HttpStatusCode.BadRequest,
-//                "Please enter a valid id"
-//            )
-//            if (!quizUserDao.existsById(id)) {
-//                return@delete call.respond(HttpStatusCode.NotFound, "User with id $id not found")
-//            }
-//            quizUserDao.delete(id)
-//            call.respond("User with id $id successfully deleted")
-//        }
+        delete("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@delete call.respond(
+                HttpStatusCode.BadRequest,
+                "Please enter a valid id."
+            )
+
+            when(val result = quizUserController.delete(id)){
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.BadRequest, result.message)
+                is ApiResponse.Success -> call.respond("User with id $id deleted successfully.")
+            }
+        }
 
     }
 }

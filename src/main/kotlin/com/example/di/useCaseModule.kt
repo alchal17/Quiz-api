@@ -1,6 +1,7 @@
 package com.example.di
 
 import com.example.domain.usecases.quizUser.CreateQuizUserUseCase
+import com.example.domain.usecases.quizUser.DeleteQuizUserUseCase
 import com.example.domain.usecases.quizUser.GetAllQuizUsersUseCase
 import com.example.domain.usecases.quizUser.GetQuizUserByIdUseCase
 import org.koin.core.module.dsl.factoryOf
@@ -10,4 +11,5 @@ val useCaseModule = module {
     factoryOf(::CreateQuizUserUseCase)
     factoryOf(::GetAllQuizUsersUseCase)
     factoryOf(::GetQuizUserByIdUseCase)
+    factoryOf(::DeleteQuizUserUseCase)
 }
