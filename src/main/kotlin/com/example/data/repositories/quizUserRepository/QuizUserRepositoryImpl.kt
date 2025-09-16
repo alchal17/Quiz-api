@@ -3,11 +3,8 @@ package com.example.data.repositories.quizUserRepository
 import com.example.data.database.tables.QuizUsersTable
 import com.example.data.models.QuizUser
 import com.example.data.repositories.CRUDRepositoryHelper
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 class QuizUserRepositoryImpl : CRUDRepositoryHelper<QuizUser>(QuizUsersTable), QuizUserRepository {
     override fun toEntity(row: ResultRow): QuizUser {
@@ -30,6 +27,26 @@ class QuizUserRepositoryImpl : CRUDRepositoryHelper<QuizUser>(QuizUsersTable), Q
             QuizUsersTable.selectAll().where { QuizUsersTable.email eq email }.map { toEntity(it) }.firstOrNull()
         }
 
+    }
+
+    override suspend fun findAnotherUserByUsername(
+        id: Int,
+        username: String
+    ): QuizUser? {
+        return transaction {
+            QuizUsersTable.selectAll().where { (QuizUsersTable.username eq username) and (QuizUsersTable.id neq id) }
+                .map { toEntity(it) }.firstOrNull()
+        }
+    }
+
+    override suspend fun findAnotherUserByEmail(
+        id: Int,
+        email: String
+    ): QuizUser? {
+        return transaction {
+            QuizUsersTable.selectAll().where { (QuizUsersTable.email eq email) and (QuizUsersTable.id neq id) }
+                .map { toEntity(it) }.firstOrNull()
+        }
     }
 
     override suspend fun getById(id: Int): QuizUser? {

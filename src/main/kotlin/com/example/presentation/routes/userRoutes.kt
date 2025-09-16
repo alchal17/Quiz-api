@@ -64,18 +64,14 @@ fun Route.userRoutes(quizUserController: QuizUserController) {
             }
         }
 
-//        put("/{id}") {
-//            val id = call.parameters["id"]?.toIntOrNull() ?: return@put call.respond(
-//                HttpStatusCode.BadRequest,
-//                "Please enter a valid id"
-//            )
-//            if (!quizUserDao.existsById(id)) {
-//                return@put call.respond(HttpStatusCode.NotFound, "User with id $id does not exist")
-//            }
-//            val user = call.receive<QuizUserDto>()
-//            quizUserDao.update(id, user)
-//            call.respond("User with id $id updated successfully")
-//        }
+        put {
+            val quizUserDto = call.receive<QuizUserDto>()
+
+            when (val result = quizUserController.update(quizUserDto)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.Conflict, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
+        }
 
         delete("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@delete call.respond(
@@ -83,7 +79,7 @@ fun Route.userRoutes(quizUserController: QuizUserController) {
                 "Please enter a valid id."
             )
 
-            when(val result = quizUserController.delete(id)){
+            when (val result = quizUserController.delete(id)) {
                 is ApiResponse.Failure -> call.respond(HttpStatusCode.BadRequest, result.message)
                 is ApiResponse.Success -> call.respond("User with id $id deleted successfully.")
             }
