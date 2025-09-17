@@ -11,7 +11,9 @@ class QuizUserController(
     private val getAllQuizUsersUseCase: GetAllQuizUsersUseCase,
     private val getQuizUserByIdUseCase: GetQuizUserByIdUseCase,
     private val deleteQuizUserUseCase: DeleteQuizUserUseCase,
-    private val updateQuizUserUseCase: UpdateQuizUserUseCase
+    private val updateQuizUserUseCase: UpdateQuizUserUseCase,
+    private val findQuzUserByEmailUseCase: FindQuzUserByEmailUseCase,
+    private val findQuizUserByUsernameUseCase: FindQuizUserByUsernameUseCase
 ) {
     suspend fun create(quizUserDto: QuizUserDto): ApiResponse<QuizUserDto> {
         val quizUserEntity = quizUserDto.toEntity()
@@ -57,6 +59,26 @@ class QuizUserController(
         result.getOrNull()?.let { quizUserEntity ->
             return ApiResponse.Success(quizUserEntity.toQuizUserDto())
         }
+        return ApiResponse.Failure((result.exceptionOrNull() ?: Exception()).message ?: "Unknown exception.")
+    }
+
+    suspend fun findUserByEmail(email: String): ApiResponse<QuizUserDto> {
+        val result = findQuzUserByEmailUseCase(email)
+
+        result.getOrNull()?.let { userEntity ->
+            return ApiResponse.Success(userEntity.toQuizUserDto())
+        }
+
+        return ApiResponse.Failure((result.exceptionOrNull() ?: Exception()).message ?: "Unknown exception.")
+    }
+
+    suspend fun findByUsername(username: String): ApiResponse<QuizUserDto> {
+        val result = findQuizUserByUsernameUseCase(username)
+
+        result.getOrNull()?.let { quizUserEntity ->
+            return ApiResponse.Success(quizUserEntity.toQuizUserDto())
+        }
+
         return ApiResponse.Failure((result.exceptionOrNull() ?: Exception()).message ?: "Unknown exception.")
     }
 }

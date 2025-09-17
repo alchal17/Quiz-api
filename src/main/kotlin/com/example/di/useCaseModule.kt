@@ -2,6 +2,8 @@ package com.example.di
 
 import com.example.domain.usecases.quizUser.CreateQuizUserUseCase
 import com.example.domain.usecases.quizUser.DeleteQuizUserUseCase
+import com.example.domain.usecases.quizUser.FindQuizUserByUsernameUseCase
+import com.example.domain.usecases.quizUser.FindQuzUserByEmailUseCase
 import com.example.domain.usecases.quizUser.GetAllQuizUsersUseCase
 import com.example.domain.usecases.quizUser.GetQuizUserByIdUseCase
 import com.example.domain.usecases.quizUser.UpdateQuizUserUseCase
@@ -14,4 +16,6 @@ val useCaseModule = module {
     factoryOf(::GetQuizUserByIdUseCase)
     factoryOf(::DeleteQuizUserUseCase)
     factoryOf(::UpdateQuizUserUseCase)
+    factoryOf(::FindQuizUserByUsernameUseCase)
+    factoryOf(::FindQuzUserByEmailUseCase)
 }

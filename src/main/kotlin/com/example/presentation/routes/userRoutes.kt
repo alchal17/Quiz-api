@@ -4,39 +4,33 @@ import com.example.presentation.controllers.QuizUserController
 import com.example.presentation.dto.ApiResponse
 import com.example.presentation.dto.QuizUserDto
 import io.ktor.http.*
-import io.ktor.server.request.receive
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.userRoutes(quizUserController: QuizUserController) {
     route("/quiz_user") {
-//        get("/email/{email}") {
-//            val email = call.parameters["email"]
-//            if (email != null) {
-//                val user = quizUserDao.getUserByEmail(email)
-//                if (user != null) {
-//                    call.respond(HttpStatusCode.OK, user)
-//                } else {
-//                    call.respond(HttpStatusCode.NotFound, "User not found")
-//                }
-//            } else {
-//                call.respond(HttpStatusCode.BadRequest, "Please enter a valid email")
-//            }
-//        }
+        get("/email/{email}") {
+            val email = call.parameters["email"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "No email has been provided."
+            )
+            when (val result = quizUserController.findUserByEmail(email)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.NotFound, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
+        }
 
-//        get("/username/{name}") {
-//            val username = call.parameters["name"]
-//            if (username != null) {
-//                val user = quizUserDao.getUserByUsername(username)
-//                if (user != null) {
-//                    call.respond(HttpStatusCode.OK, user)
-//                } else {
-//                    call.respond(HttpStatusCode.NotFound, "User not found")
-//                }
-//            } else {
-//                call.respond(HttpStatusCode.BadRequest, "Please enter a valid username")
-//            }
-//        }
+        get("/username/{name}") {
+            val username = call.parameters["name"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "No username has been provided."
+            )
+            when (val result = quizUserController.findByUsername(username)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.NotFound, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
+        }
 
         get("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
