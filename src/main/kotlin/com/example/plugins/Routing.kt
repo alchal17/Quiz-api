@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.presentation.controllers.QuizController
 import com.example.presentation.controllers.QuizUserController
 import com.example.presentation.routes.imageRoutes
 import com.example.presentation.routes.userRoutes
@@ -18,6 +19,7 @@ fun Application.configureRouting() {
 //
 //    val fileHandler: FileHandler by inject()
     val quizUserController by inject<QuizUserController>()
+    val quizController by inject<QuizController>()
     routing {
         userRoutes(quizUserController)
 //        quizRoutes(quizDao, fileHandler)

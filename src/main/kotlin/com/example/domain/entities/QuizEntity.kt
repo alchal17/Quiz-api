@@ -1,16 +1,16 @@
-package com.example.data.models
+package com.example.domain.entities
 
-import com.example.domain.entities.QuizEntity
+import com.example.presentation.dto.QuizDto
 
-data class Quiz(
-    override val id: Int? = null,
+data class QuizEntity(
+    val id: Int? = null,
     val name: String,
     val userId: Int,
     val description: String?,
     val imagePath: String?
-) : Model
+)
 
-fun Quiz.toQuizEntity():  QuizEntity = QuizEntity(
+fun QuizEntity.toQuizDto(): QuizDto = QuizDto(
     id = id,
     name = name,
     userId = userId,
