@@ -1,6 +1,6 @@
 package com.example.dao
 
-import com.example.files_handlers.FileHandler
+import com.example.data.repositories.filesHandlers.FileHandlerRepository
 import com.example.presentation.dto.QuizDto
 import com.example.data.database.tables.QuizQuestionsTable
 import com.example.data.database.tables.QuizzesTable
@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.update
 
 class QuizDao(
     private val quizQuestionDao: QuizQuestionDao,
-    private val fileHandler: FileHandler,
+    private val fileHandlerRepository: FileHandlerRepository,
 ) : Dao<QuizDto>(QuizzesTable) {
 
     override fun toEntity(row: ResultRow): QuizDto {
@@ -54,11 +54,11 @@ class QuizDao(
     }
 
     override fun delete(entity: QuizDto) {
-        entity.imagePath?.let { imagePath -> fileHandler.delete(imagePath) }
+        entity.imagePath?.let { imagePath -> fileHandlerRepository.delete(imagePath) }
         val quizQuestions = quizQuestionDao.findByQuizId(entity.id ?: throw IllegalArgumentException("Id not found"))
         quizQuestions.forEach { question ->
             question.imagePath?.let { imagePath ->
-                fileHandler.delete(imagePath)
+                fileHandlerRepository.delete(imagePath)
             }
         }
         super.delete(entity)
@@ -67,12 +67,12 @@ class QuizDao(
     override fun delete(id: Int) {
         val quiz = getById(id)
         quiz?.imagePath?.let { imagePath ->
-            fileHandler.delete(imagePath)
+            fileHandlerRepository.delete(imagePath)
         }
         val quizQuestions = quizQuestionDao.findByQuizId(id)
         quizQuestions.forEach { question ->
             question.imagePath?.let { imagePath ->
-                fileHandler.delete(imagePath)
+                fileHandlerRepository.delete(imagePath)
             }
         }
         super.delete(id)

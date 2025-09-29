@@ -1,5 +1,8 @@
 package com.example.di
 
+import com.example.domain.usecases.image.SaveImageUseCase
+import com.example.domain.usecases.quiz.CreateQuizUseCase
+import com.example.domain.usecases.quiz.DeleteQuizUseCase
 import com.example.domain.usecases.quiz.GetAllQuizzesUseCase
 import com.example.domain.usecases.quizUser.CreateQuizUserUseCase
 import com.example.domain.usecases.quizUser.DeleteQuizUserUseCase
@@ -20,5 +23,9 @@ val useCaseModule = module {
     factoryOf(::FindQuizUserByUsernameUseCase)
     factoryOf(::FindQuzUserByEmailUseCase)
 
+    factoryOf(::SaveImageUseCase)
+
     factoryOf(::GetAllQuizzesUseCase)
+    factoryOf(::CreateQuizUseCase)
+    factoryOf(::DeleteQuizUseCase)
 }

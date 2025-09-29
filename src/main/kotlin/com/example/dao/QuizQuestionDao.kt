@@ -1,6 +1,6 @@
 package com.example.dao
 
-import com.example.files_handlers.FileHandler
+import com.example.data.repositories.filesHandlers.FileHandlerRepository
 import com.example.presentation.dto.QuizQuestionDto
 import com.example.data.database.tables.QuizQuestionsTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.update
 
 
 class QuizQuestionDao(
-    private val fileHandler: FileHandler
+    private val fileHandlerRepository: FileHandlerRepository
 ) :
     Dao<QuizQuestionDto>(QuizQuestionsTable) {
 
@@ -66,7 +66,7 @@ class QuizQuestionDao(
     override fun delete(id: Int) {
         val question = getById(id)
         question?.imagePath?.let {
-            fileHandler.delete(it)
+            fileHandlerRepository.delete(it)
         }
 
         super.delete(id)

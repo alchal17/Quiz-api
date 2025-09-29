@@ -5,13 +5,13 @@ import com.example.presentation.dto.Base64QuizQuestionDto
 import com.example.presentation.dto.toBase64QuizQuestion
 import com.example.presentation.dto.toBase64QuizQuestions
 import com.example.presentation.dto.toQuizQuestion
-import com.example.files_handlers.FileHandler
+import com.example.data.repositories.filesHandlers.FileHandlerRepository
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.questionRoutes(questionDao: QuizQuestionDao, fileHandler: FileHandler) {
+fun Route.questionRoutes(questionDao: QuizQuestionDao, fileHandlerRepository: FileHandlerRepository) {
     route("/quiz_question") {
         get {
             call.respond(questionDao.getAll())
@@ -40,7 +40,7 @@ fun Route.questionRoutes(questionDao: QuizQuestionDao, fileHandler: FileHandler)
                 HttpStatusCode.NotFound,
                 "Question with id $id not found"
             )
-            call.respond(question.toBase64QuizQuestion(question.imagePath?.let { fileHandler.encodeImageToBase64(it) }))
+            call.respond(question.toBase64QuizQuestion(question.imagePath?.let { fileHandlerRepository.encodeImageToBase64(it) }))
         }
 
         get("/find_by_quiz_id/{id}") {
@@ -55,7 +55,7 @@ fun Route.questionRoutes(questionDao: QuizQuestionDao, fileHandler: FileHandler)
         get("/find_base64_questions_by_quiz_id/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
             if (id != null) {
-                call.respond(questionDao.findByQuizId(id).toBase64QuizQuestions(fileHandler))
+                call.respond(questionDao.findByQuizId(id).toBase64QuizQuestions(fileHandlerRepository))
             } else {
                 call.respond(HttpStatusCode.BadRequest, "Invalid id")
             }
@@ -64,7 +64,7 @@ fun Route.questionRoutes(questionDao: QuizQuestionDao, fileHandler: FileHandler)
         post {
             val base64Question = call.receive<Base64QuizQuestionDto>()
             val filePath = base64Question.base64Image?.let {
-                fileHandler.saveImage(it, "/question_images")
+                fileHandlerRepository.saveImage(it, "/question_images")
             }
             val question = base64Question.toQuizQuestion(filePath)
             call.respond(HttpStatusCode.Created, questionDao.add(question))
@@ -77,10 +77,10 @@ fun Route.questionRoutes(questionDao: QuizQuestionDao, fileHandler: FileHandler)
                 if (oldQuestion != null) {
                     val base64QuizQuestionDto = call.receive<Base64QuizQuestionDto>()
                     oldQuestion.imagePath?.let {
-                        fileHandler.delete(it)
+                        fileHandlerRepository.delete(it)
                     }
                     val newFilePath = base64QuizQuestionDto.base64Image?.let {
-                        fileHandler.saveImage(it, "/question_images")
+                        fileHandlerRepository.saveImage(it, "/question_images")
                     }
                     val updatedQuestion = base64QuizQuestionDto.toQuizQuestion(newFilePath)
                     questionDao.update(id, updatedQuestion)

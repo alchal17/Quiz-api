@@ -1,11 +1,11 @@
-package com.example.files_handlers
+package com.example.data.repositories.filesHandlers
 
 import kotlinx.io.files.FileNotFoundException
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
-class FileHandlerImpl : FileHandler {
+class FileHandlerRepositoryImpl : FileHandlerRepository {
 
     private fun isValidBase64(base64: String): Boolean {
         return try {
@@ -16,9 +16,9 @@ class FileHandlerImpl : FileHandler {
         }
     }
 
-    override fun saveImage(bitmap: String, directoryPath: String): String {
+    override fun saveImage(bitmap: String, directoryPath: String): String? {
         if (!isValidBase64(bitmap)) {
-            throw IllegalArgumentException("Invalid Base64 string")
+            return null
         }
 
         val decodedBytes = Base64.getDecoder().decode(bitmap)
@@ -43,13 +43,14 @@ class FileHandlerImpl : FileHandler {
 
     }
 
-    override fun delete(path: String) {
+    override fun delete(path: String): Boolean {
         val projectBasePath = File("").absolutePath
         val file = File(projectBasePath, path)
         if (file.exists()) {
             file.delete()
+            return true
         } else {
-            throw Exception("File does not exist")
+            return false
         }
 
     }
