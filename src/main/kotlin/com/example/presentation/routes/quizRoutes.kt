@@ -47,27 +47,18 @@ fun Route.quizRoutes(quizController: QuizController) {
 //            }
 //        }
 
-//        get("/{id}") {
-//            val id = call.parameters["id"]?.toIntOrNull()
-//            if (id != null) {
-//                val quiz = quizDao.getById(id)
-//                if (quiz != null) {
-//                    call.respond(quiz)
-//                } else {
-//                    call.respond(HttpStatusCode.NotFound, "Quiz with id $id does not exist")
-//                }
-//            } else {
-//                call.respond(HttpStatusCode.BadRequest)
-//            }
-//        }
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "No id has been provided."
+            )
 
-//        get("/number") {
-//            val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
-//                HttpStatusCode.BadRequest,
-//                "No ID provided"
-//            )
-//            call.respond(quizDao.getNumberOfQuestions(id))
-//        }
+            when (val result = quizController.getById(id)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.NotFound, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
+        }
+
 
         post {
             val base64QuizDto = call.receive<Base64QuizDto>()
@@ -78,29 +69,14 @@ fun Route.quizRoutes(quizController: QuizController) {
             }
         }
 
-//        put("/{id}") {
-//            val quizId = call.parameters["id"]?.toIntOrNull()
-//            if (quizId != null) {
-//                val oldQuiz = quizDao.getById(quizId)
-//                if (oldQuiz == null) {
-//                    call.respond(HttpStatusCode.NotFound, "Quiz with id $quizId does not exist")
-//                } else {
-//                    val base64QuizDto = call.receive<Base64QuizDto>()
-//                    oldQuiz.imagePath?.let { path ->
-//                        fileHandler.delete(path)
-//                    }
-//                    val newFilePath = base64QuizDto.base64Image?.let {
-//                        fileHandler.saveImage(it, "/quiz_images")
-//                    }
-//                    val updatedQuiz = base64QuizDto.toQuiz(newFilePath)
-//                    quizDao.update(quizId, updatedQuiz)
-//                    call.respond(HttpStatusCode.OK, "Quiz with id $quizId updated")
-//                }
-//
-//            } else {
-//                call.respond(HttpStatusCode.BadRequest)
-//            }
-//        }
+        put {
+            val quizDto = call.receive<Base64QuizDto>()
+
+            when (val result = quizController.update(quizDto)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.BadRequest, result.message)
+                is ApiResponse.Success -> call.respond("Quiz ${result.data.id} successfully updated")
+            }
+        }
 
         delete("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@delete call.respond(

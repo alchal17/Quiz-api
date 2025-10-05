@@ -16,7 +16,7 @@ class Base64QuizDto(
     val base64Image: String?,
 ) : Model
 
-fun Base64QuizDto.toQuizEntity(imagePath: String?): QuizEntity = QuizEntity(
+fun Base64QuizDto.toQuizEntity(imagePath: String? = null): QuizEntity = QuizEntity(
     id = id,
     name = name,
     userId = userId,
