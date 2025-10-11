@@ -1,6 +1,7 @@
 package com.example.di
 
 import com.example.presentation.controllers.QuizController
+import com.example.presentation.controllers.QuizQuestionController
 import com.example.presentation.controllers.QuizUserController
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -8,4 +9,5 @@ import org.koin.dsl.module
 val controllersModule = module {
     singleOf(::QuizUserController)
     singleOf(::QuizController)
+    singleOf(::QuizQuestionController)
 }

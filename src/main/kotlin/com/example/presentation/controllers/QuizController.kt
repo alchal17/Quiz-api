@@ -1,5 +1,6 @@
 package com.example.presentation.controllers
 
+import com.example.domain.entities.toBase64QuizDto
 import com.example.domain.entities.toQuizDto
 import com.example.domain.usecases.quiz.*
 import com.example.presentation.dto.ApiResponse
@@ -12,7 +13,9 @@ class QuizController(
     private val createQuizUseCase: CreateQuizUseCase,
     private val deleteQuizUseCase: DeleteQuizUseCase,
     private val getQuizByIdUseCase: GetQuizByIdUseCase,
-    private val updateQuizUseCase: UpdateQuizUseCase
+    private val updateQuizUseCase: UpdateQuizUseCase,
+    private val getQuizWithBase64ImageUseCase: GetQuizWithBase64ImageUseCase,
+    private val getQuizzesByUserIdUseCase: GetQuizzesByUserIdUseCase
 ) {
     suspend fun getAll(): ApiResponse<List<QuizDto>> {
         val result = getAllQuizzesUseCase()
@@ -36,6 +39,30 @@ class QuizController(
         return ApiResponse.Failure(exception.message ?: "Unknown error ocured.")
     }
 
+    suspend fun getBase64QuizById(quizId: Int): ApiResponse<Base64QuizDto> {
+        val result = getQuizWithBase64ImageUseCase(quizId)
+
+        result.getOrNull()?.let { (quizEntity, image) ->
+            val base64QuizDto = quizEntity.toBase64QuizDto(image)
+            return ApiResponse.Success(base64QuizDto)
+        }
+
+        val exception = result.exceptionOrNull() ?: Exception()
+        return ApiResponse.Failure(exception.message ?: "Unknown error has ocured.")
+    }
+
+    suspend fun getQuizzesByUserId(userId: Int): ApiResponse<List<QuizDto>> {
+        val result = getQuizzesByUserIdUseCase(userId)
+
+        result.getOrNull()?.let { quizEntities ->
+            return ApiResponse.Success(quizEntities.map { it.toQuizDto() })
+        }
+
+        val exception = result.exceptionOrNull() ?: Exception()
+
+        return ApiResponse.Failure(exception.message ?: "Unknown error ocured.")
+    }
+
     suspend fun create(base64QuizDto: Base64QuizDto): ApiResponse<QuizDto> {
 
         val quizEntity = base64QuizDto.toQuizEntity()
@@ -50,7 +77,7 @@ class QuizController(
         return ApiResponse.Failure(receivedException.message ?: "Unknown error ocured.")
     }
 
-    suspend fun update(quizDto: Base64QuizDto): ApiResponse<QuizDto>  {
+    suspend fun update(quizDto: Base64QuizDto): ApiResponse<QuizDto> {
         val quizEntity = quizDto.toQuizEntity()
         val result = updateQuizUseCase(quizEntity, quizDto.base64Image)
 

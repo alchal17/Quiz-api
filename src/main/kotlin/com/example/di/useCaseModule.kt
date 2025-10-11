@@ -20,4 +20,6 @@ val useCaseModule = module {
     factoryOf(::DeleteQuizUseCase)
     factoryOf(::GetQuizByIdUseCase)
     factoryOf(::UpdateQuizUseCase)
+    factoryOf(::GetQuizWithBase64ImageUseCase)
+    factoryOf(::GetQuizzesByUserIdUseCase)
 }

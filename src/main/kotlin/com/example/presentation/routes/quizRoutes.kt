@@ -12,15 +12,6 @@ import io.ktor.server.routing.*
 fun Route.quizRoutes(quizController: QuizController) {
     route("/quiz") {
 
-//        get("user_id/{id}") {
-//            val id = call.parameters["id"]?.toIntOrNull()
-//            if (id != null) {
-//                call.respond(quizDao.findByUserId(id))
-//            } else {
-//                call.respond(HttpStatusCode.BadRequest)
-//            }
-//        }
-
         get {
             when (val result = quizController.getAll()) {
                 is ApiResponse.Failure -> call.respond(HttpStatusCode.BadRequest, result.message)
@@ -28,24 +19,27 @@ fun Route.quizRoutes(quizController: QuizController) {
             }
         }
 
-//        get("/base_64_quiz/{id}") {
-//            val id = call.parameters["id"]?.toIntOrNull()
-//            if (id != null) {
-//                val quiz = quizDao.getById(id)
-//                if (quiz != null) {
-//                    val base64Image = quiz.imagePath?.let {
-//                        fileHandler.encodeImageToBase64(it)
-//                    }
-//                    val base64Quiz = quiz.toBase64Quiz(
-//                        base64Image = base64Image
-//                    )
-//                    call.respond(HttpStatusCode.OK, base64Quiz)
-//                }
-//                call.respond(HttpStatusCode.NotFound, "Quiz with id $id does not exist")
-//            } else {
-//                call.respond(HttpStatusCode.BadRequest)
-//            }
-//        }
+        get("/by_user") {
+            val userId = call.request.queryParameters["user_id"]?.toIntOrNull()
+                ?: return@get call.respond("No user id has been provided.")
+
+            when (val result = quizController.getQuizzesByUserId(userId)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.BadRequest, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
+        }
+
+        get("/base_64_quiz/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "No id has been provided."
+            )
+
+            when (val result = quizController.getBase64QuizById(id)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.NotFound, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
+        }
 
         get("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(

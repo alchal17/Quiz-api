@@ -3,6 +3,7 @@ package com.example.plugins
 import com.example.presentation.controllers.QuizController
 import com.example.presentation.controllers.QuizUserController
 import com.example.presentation.routes.imageRoutes
+import com.example.presentation.routes.questionRoutes
 import com.example.presentation.routes.quizRoutes
 import com.example.presentation.routes.userRoutes
 import io.ktor.server.application.*
@@ -24,7 +25,7 @@ fun Application.configureRouting() {
     routing {
         userRoutes(quizUserController)
         quizRoutes(quizController)
-//        questionRoutes(questionDao, fileHandler)
+        questionRoutes()
 //        questionOptionRoutes(optionDao)
 
         imageRoutes()
