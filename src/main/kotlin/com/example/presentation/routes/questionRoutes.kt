@@ -1,27 +1,34 @@
 package com.example.presentation.routes
 
 import com.example.presentation.controllers.QuizQuestionController
+import com.example.presentation.dto.ApiResponse
+import com.example.presentation.dto.Base64QuizQuestionDto
+import io.ktor.http.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.questionRoutes(quizQuestionController: QuizQuestionController) {
     route("/quiz_question") {
         get {
-            call.respond(questionDao.getAll())
+            when (val result = quizQuestionController.getAll()) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.BadRequest, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
         }
-//
-//        get("/{id}") {
-//            val id = call.parameters["id"]?.toIntOrNull()
-//            if (id != null) {
-//                val question = questionDao.getById(id)
-//                if (question != null) {
-//                    call.respond(HttpStatusCode.OK, question)
-//                } else {
-//                    call.respond(HttpStatusCode.NotFound, "Question with id $id not found")
-//                }
-//            } else {
-//                call.respond(HttpStatusCode.BadRequest, "Invalid id")
-//            }
-//        }
+
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "No id has been provided."
+            )
+
+            when (val result = quizQuestionController.getById(id)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.NotFound, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
+
+        }
 //
 //        get("/find_base64_question_by_id/{id}") {
 //            val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(
@@ -53,14 +60,14 @@ fun Route.questionRoutes(quizQuestionController: QuizQuestionController) {
 //            }
 //        }
 //
-//        post {
-//            val base64Question = call.receive<Base64QuizQuestionDto>()
-//            val filePath = base64Question.base64Image?.let {
-//                fileHandlerRepository.saveImage(it, "/question_images")
-//            }
-//            val question = base64Question.toQuizQuestion(filePath)
-//            call.respond(HttpStatusCode.Created, questionDao.add(question))
-//        }
+        post {
+            val base64Question = call.receive<Base64QuizQuestionDto>()
+
+            when (val result = quizQuestionController.create(base64Question)) {
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.BadRequest, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
+        }
 //
 //        put("/{id}") {
 //            val id = call.parameters["id"]?.toIntOrNull()

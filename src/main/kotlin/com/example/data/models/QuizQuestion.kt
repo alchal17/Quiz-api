@@ -1,5 +1,7 @@
 package com.example.data.models
 
+import com.example.domain.entities.QuizQuestionEntity
+
 data class QuizQuestion(
     override val id: Int? = null,
     val quizId: Int,
@@ -9,3 +11,13 @@ data class QuizQuestion(
     val secondsToAnswer: Int,
     val orderNumber: Int
 ) : Model
+
+fun QuizQuestion.toQuizQuestionEntity(): QuizQuestionEntity = QuizQuestionEntity(
+    id = id,
+    quizId = quizId,
+    text = text,
+    imagePath = imagePath,
+    multipleChoices = multipleChoices,
+    secondsToAnswer = secondsToAnswer,
+    orderNumber = orderNumber
+)

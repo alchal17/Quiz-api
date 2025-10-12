@@ -1,6 +1,7 @@
 package com.example.presentation.dto
 
 import com.example.data.models.Model
+import com.example.domain.entities.QuizQuestionEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -16,12 +17,12 @@ data class Base64QuizQuestionDto(
     val multipleChoices: Boolean,
     @SerialName("seconds_to_answer")
     val secondsToAnswer: Int,
-    @SerialName("oder_number")
+    @SerialName("order_number")
     val orderNumber: Int
 ) : Model
 
-fun Base64QuizQuestionDto.toQuizQuestion(imagePath: String?): QuizQuestionDto {
-    return QuizQuestionDto(
+fun Base64QuizQuestionDto.toQuizQuestionEntity(imagePath: String? = null): QuizQuestionEntity {
+    return QuizQuestionEntity(
         id = id,
         quizId = quizId,
         text = text,

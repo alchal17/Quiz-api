@@ -2,6 +2,8 @@ package com.example.di
 
 import com.example.data.repositories.filesHandlers.FileHandlerRepository
 import com.example.data.repositories.filesHandlers.FileHandlerRepositoryImpl
+import com.example.data.repositories.quizQuestionRepository.QuizQuestionRepository
+import com.example.data.repositories.quizQuestionRepository.QuizQuestionRepositoryImpl
 import com.example.data.repositories.quizRpository.QuizRepository
 import com.example.data.repositories.quizRpository.QuizRepositoryImpl
 import com.example.data.repositories.quizUserRepository.QuizUserRepository
@@ -14,4 +16,5 @@ val repositoryModule = module {
     factoryOf(::QuizUserRepositoryImpl) bind QuizUserRepository::class
     factoryOf(::QuizRepositoryImpl) bind QuizRepository::class
     factoryOf(::FileHandlerRepositoryImpl) bind FileHandlerRepository::class
+    factoryOf(::QuizQuestionRepositoryImpl) bind QuizQuestionRepository::class
 }
