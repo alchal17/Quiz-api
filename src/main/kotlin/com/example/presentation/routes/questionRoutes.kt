@@ -68,29 +68,15 @@ fun Route.questionRoutes(quizQuestionController: QuizQuestionController) {
                 is ApiResponse.Success -> call.respond(result.data)
             }
         }
-//
-//        put("/{id}") {
-//            val id = call.parameters["id"]?.toIntOrNull()
-//            if (id != null) {
-//                val oldQuestion = questionDao.getById(id)
-//                if (oldQuestion != null) {
-//                    val base64QuizQuestionDto = call.receive<Base64QuizQuestionDto>()
-//                    oldQuestion.imagePath?.let {
-//                        fileHandlerRepository.delete(it)
-//                    }
-//                    val newFilePath = base64QuizQuestionDto.base64Image?.let {
-//                        fileHandlerRepository.saveImage(it, "/question_images")
-//                    }
-//                    val updatedQuestion = base64QuizQuestionDto.toQuizQuestion(newFilePath)
-//                    questionDao.update(id, updatedQuestion)
-//                    call.respond(HttpStatusCode.OK, "Question with id $id successfully updated")
-//                } else {
-//                    call.respond(HttpStatusCode.NotFound, "Question with id $id not found")
-//                }
-//            } else {
-//                call.respond(HttpStatusCode.BadRequest, "Invalid id")
-//            }
-//        }
+
+        put {
+            val base64QuizQuestionDto = call.receive<Base64QuizQuestionDto>()
+
+            when(val result = quizQuestionController.update(base64QuizQuestionDto)){
+                is ApiResponse.Failure -> call.respond(HttpStatusCode.BadRequest, result.message)
+                is ApiResponse.Success -> call.respond(result.data)
+            }
+        }
 //
 //
 //        delete("/{id}") {

@@ -4,6 +4,7 @@ import com.example.domain.usecases.quiz.*
 import com.example.domain.usecases.quizQuestions.CreateQuizQuestionUseCase
 import com.example.domain.usecases.quizQuestions.GetAllQuizQuestionsUseCase
 import com.example.domain.usecases.quizQuestions.GetQuizQuestionByIdUseCase
+import com.example.domain.usecases.quizQuestions.UpdateQuizQuestionUseCase
 import com.example.domain.usecases.quizUser.*
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
@@ -29,4 +30,5 @@ val useCaseModule = module {
     factoryOf(::GetAllQuizQuestionsUseCase)
     factoryOf(::GetQuizQuestionByIdUseCase)
     factoryOf(::CreateQuizQuestionUseCase)
+    factoryOf(::UpdateQuizQuestionUseCase)
 }
